@@ -38,10 +38,11 @@ def pickup(user_id: str, asset_ids: str):
         typer.echo(json.dumps(result))
 
 @app.command(name="return")
-def return_command(user_id: str, asset_id: str):
+def return_command(user_id: str, asset_ids: str):
+    ids = [aid.strip() for aid in asset_ids.split(",")]
     with SessionLocal() as db:
         service = AssetService(db)
-        result = service.return_asset(user_id, asset_id)
+        result = service.return_assets(user_id, ids)
         typer.echo(json.dumps(result))
 
 admin_app = typer.Typer()

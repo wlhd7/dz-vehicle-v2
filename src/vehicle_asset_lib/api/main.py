@@ -43,7 +43,8 @@ class PickupRequest(BaseModel):
 
 class ReturnRequest(BaseModel):
     user_id: str
-    asset_id: str
+    asset_ids: Optional[List[str]] = None
+    asset_id: Optional[str] = None
 
 @app.on_event("startup")
 def startup_event():
@@ -75,9 +76,12 @@ def pickup_assets(req: PickupRequest, db: Session = Depends(get_db)):
     return result
 
 @app.post("/return")
-def return_asset(req: ReturnRequest, db: Session = Depends(get_db)):
+def return_assets(req: ReturnRequest, db: Session = Depends(get_db)):
     service = AssetService(db)
-    result = service.return_asset(req.user_id, req.asset_id)
+    asset_ids = req.asset_ids or ([req.asset_id] if req.asset_id else [])
+    if not asset_ids:
+        raise HTTPException(status_code=400, detail="No asset IDs provided")
+    result = service.return_assets(req.user_id, asset_ids)
     if not result["success"]:
         raise HTTPException(status_code=400, detail=result["message"])
     return result
