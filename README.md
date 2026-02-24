@@ -1,48 +1,55 @@
 # Vehicle Asset Pickup Library
 
-An unattended vehicle asset (keys, gas cards) pickup system.
+An unattended vehicle asset (keys, gas cards) pickup system with a localized Chinese dashboard.
+
+## Features
+- **Unattended Workflow**: Simplified pickup and return for vehicles and gas cards.
+- **Localized UI**: Modern frontend built with Vue 3, Element Plus, and fully localized in Chinese.
+- **Dual Interface**: Robust Typer-based CLI and FastAPI-powered REST API.
+- **Secure Administration**: Protected administrative operations using `ADMIN_SECRET` and OTPs.
+- **Reliable Persistence**: Production-ready SQLite integration with atomic transactions.
 
 ## Project Structure
 - `src/vehicle_asset_lib/`: Core logic and CLI.
 - `src/vehicle_asset_lib/api/`: FastAPI REST endpoints.
-- `frontend/`: Vue 3 + TypeScript + Element Plus dashboard.
-- `tests/`: TDD test suite.
+- `frontend/`: Vue 3 + TypeScript + Element Plus dashboard (Chinese).
+- `tests/`: Comprehensive TDD test suite.
 
 ## Setup
 
 ### Backend
-1. Create virtual environment:
+1. **Create virtual environment**:
    ```bash
    python3 -m venv .venv
    source .venv/bin/activate
    ```
-2. Install dependencies:
+2. **Install dependencies**:
    ```bash
    pip install -e ".[test]"
    ```
-3. Configure Security:
+3. **Configure Security**:
    Create a `.env` file in the root directory:
    ```bash
    ADMIN_SECRET=your_secure_random_string
    ```
    *Note: If .env is configured, you don't need to prefix commands with ADMIN_SECRET.*
 
-4. Initialize Database:
+4. **Initialize Database**:
    ```bash
    vehicle-asset admin init
    ```
-5. Run API:
+5. **Run API**:
    ```bash
    uvicorn vehicle_asset_lib.api.main:app --reload
    ```
 
 ### Frontend
-1. Install dependencies:
+1. **Install dependencies**:
    ```bash
    cd frontend
    npm install
    ```
-2. Run development server:
+2. **Run development server**:
    ```bash
    npm run dev
    ```
