@@ -5,33 +5,35 @@
         <h2>{{ $t('dashboard.welcome', { name: userName }) }}</h2>
         <el-button @click="handleLogout">{{ $t('common.logout') }}</el-button>
       </div>
-      
-      <el-tabs v-model="activeTab">
-        <el-tab-pane :label="$t('dashboard.pickupTab')" name="pickup">
-          <el-table :data="availableAssets" style="width: 100%" @selection-change="handleSelectionChange">
-            <el-table-column type="selection" width="55" />
-            <el-table-column prop="identifier" :label="$t('dashboard.identifier')" />
-            <el-table-column prop="type" :label="$t('dashboard.type')" />
-            <el-table-column prop="status" :label="$t('dashboard.status')" />
-          </el-table>
-          
-          <div style="margin-top: 20px; text-align: right;">
-            <el-button type="primary" :disabled="selectedAssets.length === 0" :loading="loading" @click="handlePickup">{{ $t('dashboard.pickupSelected') }}</el-button>
-          </div>
-        </el-tab-pane>
+
+      <!-- Return Assets Section -->
+      <div v-if="heldAssets.length > 0" class="section-container" style="margin-top: 20px;">
+        <h3>{{ $t('dashboard.return') }}</h3>
+        <el-table :data="heldAssets" style="width: 100%">
+          <el-table-column prop="identifier" :label="$t('dashboard.identifier')" />
+          <el-table-column prop="type" :label="$t('dashboard.type')" />
+          <el-table-column :label="$t('dashboard.action')">
+            <template #default="scope">
+              <el-button size="small" type="danger" @click="handleReturn(scope.row.id)" :loading="loading">{{ $t('dashboard.returnAction') }}</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+
+      <!-- Pickup Assets Section -->
+      <div class="section-container" :style="{ marginTop: heldAssets.length > 0 ? '40px' : '20px' }">
+        <h3>{{ $t('dashboard.pickup') }}</h3>
+        <el-table :data="availableAssets" style="width: 100%" @selection-change="handleSelectionChange">
+          <el-table-column type="selection" width="55" />
+          <el-table-column prop="identifier" :label="$t('dashboard.identifier')" />
+          <el-table-column prop="type" :label="$t('dashboard.type')" />
+          <el-table-column prop="status" :label="$t('dashboard.status')" />
+        </el-table>
         
-        <el-tab-pane :label="$t('dashboard.returnTab')" name="return">
-           <el-table :data="heldAssets" style="width: 100%">
-            <el-table-column prop="identifier" :label="$t('dashboard.identifier')" />
-            <el-table-column prop="type" :label="$t('dashboard.type')" />
-            <el-table-column :label="$t('dashboard.action')">
-              <template #default="scope">
-                <el-button size="small" type="danger" @click="handleReturn(scope.row.id)" :loading="loading">{{ $t('dashboard.return') }}</el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-tab-pane>
-      </el-tabs>
+        <div style="margin-top: 20px; text-align: right;">
+          <el-button type="primary" :disabled="selectedAssets.length === 0" :loading="loading" @click="handlePickup">{{ $t('dashboard.pickupSelected') }}</el-button>
+        </div>
+      </div>
     </el-card>
     
     <el-dialog v-model="otpDialogVisible" :title="$t('dashboard.otpTitle')" width="300">
@@ -61,7 +63,6 @@ const userId = localStorage.getItem('user_id')
 const userName = localStorage.getItem('user_name') || 'User'
 const assets = ref<Asset[]>([])
 const loading = ref(false)
-const activeTab = ref('pickup')
 const selectedAssets = ref<Asset[]>([])
 
 const otpDialogVisible = ref(false)
