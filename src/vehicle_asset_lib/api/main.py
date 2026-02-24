@@ -1,0 +1,167 @@
+from typing import List, Optional
+import uuid
+from fastapi import FastAPI, Depends, HTTPException, APIRouter
+from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.orm import Session
+from pydantic import BaseModel
+from dotenv import load_dotenv
+from ..db import SessionLocal, init_db
+from ..services.verification import VerificationService
+from ..services.assets import AssetService
+from ..services.admin import AdminService
+from .auth import verify_admin_access
+
+# Load environment variables from .env
+load_dotenv()
+
+app = FastAPI(title="Vehicle Asset API")
+
+# Enable CORS for frontend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+# Pydantic models for request/response
+class VerifyRequest(BaseModel):
+    name: str
+    id_digits: str
+
+class PickupRequest(BaseModel):
+    user_id: str
+    asset_ids: List[str]
+
+class ReturnRequest(BaseModel):
+    user_id: str
+    asset_id: str
+
+@app.on_event("startup")
+def startup_event():
+    init_db()
+
+@app.get("/")
+def read_root():
+    return {"message": "Vehicle Asset API is running"}
+
+@app.post("/verify")
+def verify_user(req: VerifyRequest, db: Session = Depends(get_db)):
+    service = VerificationService(db)
+    result = service.verify_user(req.name, req.id_digits)
+    if not result["success"]:
+        raise HTTPException(status_code=401, detail=result["message"])
+    return result
+
+@app.get("/assets")
+def list_assets(type: str = "all", db: Session = Depends(get_db)):
+    service = AssetService(db)
+    return service.list_assets(type)
+
+@app.post("/pickup")
+def pickup_assets(req: PickupRequest, db: Session = Depends(get_db)):
+    service = AssetService(db)
+    result = service.pickup(req.user_id, req.asset_ids)
+    if not result["success"]:
+        raise HTTPException(status_code=400, detail=result["message"])
+    return result
+
+@app.post("/return")
+def return_asset(req: ReturnRequest, db: Session = Depends(get_db)):
+    service = AssetService(db)
+    result = service.return_asset(req.user_id, req.asset_id)
+    if not result["success"]:
+        raise HTTPException(status_code=400, detail=result["message"])
+    return result
+
+# Admin Endpoints
+admin_router = APIRouter(prefix="/admin", dependencies=[Depends(verify_admin_access)])
+
+class AddAssetRequest(BaseModel):
+    type: str
+    identifier: str
+
+class AddUserRequest(BaseModel):
+    name: str
+    id_last4: str
+
+class SeedOTPRequest(BaseModel):
+    count: int = 100
+
+@admin_router.post("/assets")
+def admin_add_asset(req: AddAssetRequest, db: Session = Depends(get_db)):
+    service = AdminService(db)
+    from ..models import AssetType
+    asset_type = AssetType.KEY if req.type.upper() == "KEY" else AssetType.GAS_CARD
+    asset = service.add_asset(asset_type, req.identifier)
+    return {"id": str(asset.id), "identifier": asset.identifier}
+
+class UpdateAssetRequest(BaseModel):
+    identifier: Optional[str] = None
+    type: Optional[str] = None
+
+@admin_router.patch("/assets/{asset_id}")
+def admin_update_asset(asset_id: str, req: UpdateAssetRequest, db: Session = Depends(get_db)):
+    service = AdminService(db)
+    from ..models import AssetType
+    asset_type = None
+    if req.type:
+        asset_type = AssetType.KEY if req.type.upper() == "KEY" else AssetType.GAS_CARD
+    asset = service.update_asset(asset_id, identifier=req.identifier, type=asset_type)
+    if not asset:
+        raise HTTPException(status_code=404, detail="Asset not found")
+    return {"id": str(asset.id), "identifier": asset.identifier, "type": asset.type.value}
+
+@admin_router.delete("/assets/{asset_id}")
+def admin_delete_asset(asset_id: str, db: Session = Depends(get_db)):
+    service = AdminService(db)
+    if not service.delete_asset(asset_id):
+        raise HTTPException(status_code=404, detail="Asset not found")
+    return {"message": "Asset deleted"}
+
+@admin_router.get("/users")
+def admin_list_users(db: Session = Depends(get_db)):
+    service = AdminService(db)
+    users = service.list_users()
+    return [{"id": str(u.id), "name": u.name, "id_last4": u.id_last4, "status": u.status.value} for u in users]
+
+@admin_router.post("/users")
+def admin_add_user(req: AddUserRequest, db: Session = Depends(get_db)):
+    service = AdminService(db)
+    user = service.add_user(req.name, req.id_last4)
+    return {"id": str(user.id), "name": user.name}
+
+class UpdateUserRequest(BaseModel):
+    name: Optional[str] = None
+    id_last4: Optional[str] = None
+
+@admin_router.patch("/users/{user_id}")
+def admin_update_user(user_id: str, req: UpdateUserRequest, db: Session = Depends(get_db)):
+    service = AdminService(db)
+    user = service.update_user(user_id, name=req.name, id_last4=req.id_last4)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return {"id": str(user.id), "name": user.name}
+
+@admin_router.delete("/users/{user_id}")
+def admin_delete_user(user_id: str, db: Session = Depends(get_db)):
+    service = AdminService(db)
+    if not service.delete_user(user_id):
+        raise HTTPException(status_code=404, detail="User not found")
+    return {"message": "User deleted"}
+
+@admin_router.post("/seed-otps")
+def admin_seed_otps(req: SeedOTPRequest, db: Session = Depends(get_db)):
+    service = AdminService(db)
+    passwords = [f"OTP-{i:04d}-{str(uuid.uuid4())[:4]}" for i in range(req.count)]
+    return service.seed_otps(passwords)
+
+app.include_router(admin_router)
