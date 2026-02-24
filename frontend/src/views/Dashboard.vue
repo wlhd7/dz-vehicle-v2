@@ -16,22 +16,39 @@
               {{ $t('dashboard.assetTypes.' + scope.row.type) }}
             </template>
           </el-table-column>
-          <el-table-column :label="$t('dashboard.action')">
-            <template #default="scope">
-              <el-button size="small" type="danger" @click="handleReturn(scope.row.id)" :loading="loading">{{ $t('dashboard.returnAction') }}</el-button>
-            </template>
-          </el-table-column>
         </el-table>
+        <div style="margin-top: 20px; text-align: right;">
+          <el-button type="danger" :loading="loading" @click="handleReturn">{{ $t('dashboard.returnAction') }}</el-button>
+        </div>
       </div>
 
       <!-- Pickup Assets Section -->
       <div class="section-container" :style="{ marginTop: heldAssets.length > 0 ? '40px' : '20px' }">
         <h3>{{ $t('dashboard.pickup') }}</h3>
-        <el-table :data="availableAssets" style="width: 100%" @selection-change="handleSelectionChange">
-          <el-table-column type="selection" width="55" />
-          <el-table-column prop="identifier" :label="$t('dashboard.identifier')" />
-          <el-table-column prop="status" :label="$t('dashboard.status')" />
-        </el-table>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-table 
+              :data="availableVehicles" 
+              style="width: 100%" 
+              @row-click="handleVehicleClick"
+              :row-class-name="tableRowClassName"
+              row-key="id"
+            >
+              <el-table-column prop="identifier" :label="$t('dashboard.assetTypes.KEY')" />
+            </el-table>
+          </el-col>
+          <el-col :span="12">
+            <el-table 
+              :data="availableGasCards" 
+              style="width: 100%" 
+              @row-click="handleGasCardClick"
+              :row-class-name="tableRowClassName"
+              row-key="id"
+            >
+              <el-table-column prop="identifier" :label="$t('dashboard.assetTypes.GAS_CARD')" />
+            </el-table>
+          </el-col>
+        </el-row>
         
         <div style="margin-top: 20px; text-align: right;">
           <el-button type="primary" :disabled="selectedAssets.length === 0" :loading="loading" @click="handlePickup">{{ $t('dashboard.pickupSelected') }}</el-button>
@@ -66,7 +83,9 @@ const userId = localStorage.getItem('user_id')
 const userName = localStorage.getItem('user_name') || 'User'
 const assets = ref<Asset[]>([])
 const loading = ref(false)
-const selectedAssets = ref<Asset[]>([])
+
+const selectedVehicle = ref<Asset | null>(null)
+const selectedGasCard = ref<Asset | null>(null)
 
 const otpDialogVisible = ref(false)
 const otpCode = ref('')
@@ -84,6 +103,13 @@ const fetchAssets = async () => {
   try {
     const response = await api.get<Asset[]>('/assets')
     assets.value = response.data
+    // Clear selection on refresh if assets no longer available
+    if (selectedVehicle.value && !availableVehicles.value.find(v => v.id === selectedVehicle.value?.id)) {
+      selectedVehicle.value = null
+    }
+    if (selectedGasCard.value && !availableGasCards.value.find(g => g.id === selectedGasCard.value?.id)) {
+      selectedGasCard.value = null
+    }
   } catch (error: any) {
     ElMessage.error(error)
   }
@@ -107,11 +133,38 @@ const formatDateTime = (dateStr: string) => {
   }
 }
 
-const availableAssets = computed(() => assets.value.filter(a => a.status === 'AVAILABLE'))
+const availableVehicles = computed(() => assets.value.filter(a => a.status === 'AVAILABLE' && a.type === 'KEY'))
+const availableGasCards = computed(() => assets.value.filter(a => a.status === 'AVAILABLE' && a.type === 'GAS_CARD'))
 const heldAssets = computed(() => assets.value.filter(a => a.status === 'CHECKED_OUT')) // In a real app, this should filter by user_id from backend
 
-const handleSelectionChange = (val: Asset[]) => {
-  selectedAssets.value = val
+const selectedAssets = computed(() => {
+  const result = []
+  if (selectedVehicle.value) result.push(selectedVehicle.value)
+  if (selectedGasCard.value) result.push(selectedGasCard.value)
+  return result
+})
+
+const handleVehicleClick = (row: Asset) => {
+  if (selectedVehicle.value?.id === row.id) {
+    selectedVehicle.value = null
+  } else {
+    selectedVehicle.value = row
+  }
+}
+
+const handleGasCardClick = (row: Asset) => {
+  if (selectedGasCard.value?.id === row.id) {
+    selectedGasCard.value = null
+  } else {
+    selectedGasCard.value = row
+  }
+}
+
+const tableRowClassName = ({ row }: { row: Asset }) => {
+  if (selectedVehicle.value?.id === row.id || selectedGasCard.value?.id === row.id) {
+    return 'selected-row'
+  }
+  return ''
 }
 
 const handlePickup = async () => {
@@ -127,6 +180,8 @@ const handlePickup = async () => {
     otpExpires.value = response.data.expires_at
     otpDialogVisible.value = true
     
+    selectedVehicle.value = null
+    selectedGasCard.value = null
     fetchAssets()
   } catch (error: any) {
     ElMessage.error(error)
@@ -135,12 +190,13 @@ const handlePickup = async () => {
   }
 }
 
-const handleReturn = async (assetId: string) => {
+const handleReturn = async () => {
   loading.value = true
   try {
+    const assetIds = heldAssets.value.map(a => a.id)
     const response = await api.post<ReturnResponse>('/return', {
       user_id: userId,
-      asset_id: assetId
+      asset_ids: assetIds
     })
     
     ElMessageBox.alert(
@@ -165,5 +221,9 @@ const handleLogout = () => {
 <style scoped>
 .dashboard-container {
   padding: 20px;
+}
+
+:deep(.selected-row) {
+  background-color: #f0f9eb !important;
 }
 </style>
