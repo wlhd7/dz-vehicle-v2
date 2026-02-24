@@ -11,7 +11,11 @@
         <h3>{{ $t('dashboard.return') }}</h3>
         <el-table :data="heldAssets" style="width: 100%">
           <el-table-column prop="identifier" :label="$t('dashboard.identifier')" />
-          <el-table-column prop="type" :label="$t('dashboard.type')" />
+          <el-table-column :label="$t('dashboard.type')">
+            <template #default="scope">
+              {{ $t('dashboard.assetTypes.' + scope.row.type) }}
+            </template>
+          </el-table-column>
           <el-table-column :label="$t('dashboard.action')">
             <template #default="scope">
               <el-button size="small" type="danger" @click="handleReturn(scope.row.id)" :loading="loading">{{ $t('dashboard.returnAction') }}</el-button>
@@ -26,7 +30,6 @@
         <el-table :data="availableAssets" style="width: 100%" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55" />
           <el-table-column prop="identifier" :label="$t('dashboard.identifier')" />
-          <el-table-column prop="type" :label="$t('dashboard.type')" />
           <el-table-column prop="status" :label="$t('dashboard.status')" />
         </el-table>
         
