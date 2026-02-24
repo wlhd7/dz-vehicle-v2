@@ -2,26 +2,42 @@
   <div class="admin-container">
     <el-card>
       <div style="display: flex; justify-content: space-between; align-items: center;">
-        <h2>Admin Management</h2>
-        <el-button @click="$router.push('/')">Go to Login</el-button>
+        <h2>{{ $t('admin.title') }}</h2>
+        <el-button @click="$router.push('/')">{{ $t('common.back') }}</el-button>
       </div>
+
+      <!-- Security Settings -->
+      <el-card shadow="never" style="margin-top: 20px; border: 1px solid #e6a23c; background-color: #fdf6ec;">
+        <div style="display: flex; align-items: center; gap: 15px;">
+          <strong style="color: #e6a23c;">{{ $t('admin.secretLabel') }}</strong>
+          <el-input 
+            v-model="adminSecret" 
+            type="password" 
+            :placeholder="$t('admin.secretPlaceholder')" 
+            show-password
+            style="width: 300px"
+          />
+          <el-button type="warning" @click="saveSecret">{{ $t('admin.saveSecret') }}</el-button>
+          <span style="font-size: 12px; color: #909399;">{{ $t('admin.secretNote') }}</span>
+        </div>
+      </el-card>
 
       <el-row :gutter="20">
         <el-col :span="12">
           <el-card shadow="never" style="margin-top: 20px;">
-            <h3>Add New Asset</h3>
+            <h3>{{ $t('admin.addAsset') }}</h3>
             <el-form :model="assetForm" label-width="100px">
-              <el-form-item label="Type">
-                <el-select v-model="assetForm.type" placeholder="Select type">
+              <el-form-item :label="$t('admin.type')">
+                <el-select v-model="assetForm.type" placeholder="">
                   <el-option label="KEY" value="KEY" />
                   <el-option label="GAS_CARD" value="GAS_CARD" />
                 </el-select>
               </el-form-item>
-              <el-form-item label="Identifier">
-                <el-input v-model="assetForm.identifier" placeholder="Plate or Card Number" />
+              <el-form-item :label="$t('admin.identifier')">
+                <el-input v-model="assetForm.identifier" :placeholder="$t('admin.identifierPlaceholder')" />
               </el-form-item>
               <el-form-item>
-                <el-button type="primary" @click="handleAddAsset" :loading="loading">Add Asset</el-button>
+                <el-button type="primary" @click="handleAddAsset" :loading="loading">{{ $t('admin.submitAsset') }}</el-button>
               </el-form-item>
             </el-form>
           </el-card>
@@ -29,16 +45,16 @@
 
         <el-col :span="12">
           <el-card shadow="never" style="margin-top: 20px;">
-            <h3>Whitelist New User</h3>
+            <h3>{{ $t('admin.whitelistUser') }}</h3>
             <el-form :model="userForm" label-width="100px">
-              <el-form-item label="Full Name">
-                <el-input v-model="userForm.name" placeholder="Alice Smith" />
+              <el-form-item :label="$t('login.name')">
+                <el-input v-model="userForm.name" :placeholder="$t('login.namePlaceholder')" />
               </el-form-item>
-              <el-form-item label="ID Last 4">
-                <el-input v-model="userForm.id_last4" placeholder="5678" maxlength="4" />
+              <el-form-item :label="$t('admin.idLast4')">
+                <el-input v-model="userForm.id_last4" :placeholder="$t('admin.idLast4Placeholder')" maxlength="4" />
               </el-form-item>
               <el-form-item>
-                <el-button type="primary" @click="handleAddUser" :loading="loading">Add User</el-button>
+                <el-button type="primary" @click="handleAddUser" :loading="loading">{{ $t('admin.submitUser') }}</el-button>
               </el-form-item>
             </el-form>
           </el-card>
@@ -46,11 +62,11 @@
       </el-row>
 
       <el-card shadow="never" style="margin-top: 20px;">
-        <h3>OTP Pool Management</h3>
+        <h3>{{ $t('admin.otpPool') }}</h3>
         <div style="display: flex; align-items: center; gap: 20px;">
-          <span>Current pool count: {{ otpCount }}</span>
+          <span>{{ $t('admin.currentPool', { count: otpCount }) }}</span>
           <el-input-number v-model="seedCount" :min="10" :max="500" />
-          <el-button type="warning" @click="handleSeedOTPs" :loading="loading">Seed New OTPs</el-button>
+          <el-button type="warning" @click="handleSeedOTPs" :loading="loading">{{ $t('admin.seedOTPs') }}</el-button>
         </div>
       </el-card>
     </el-card>
@@ -59,12 +75,20 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import api from '../api/client'
 
+const { t } = useI18n()
 const loading = ref(false)
 const otpCount = ref(0)
 const seedCount = ref(100)
+const adminSecret = ref(localStorage.getItem('admin_secret') || '')
+
+const saveSecret = () => {
+  localStorage.setItem('admin_secret', adminSecret.value)
+  ElMessage.success(t('common.success'))
+}
 
 const assetForm = reactive({
   type: 'KEY',
@@ -81,7 +105,7 @@ const handleAddAsset = async () => {
   loading.value = true
   try {
     await api.post('/admin/assets', assetForm)
-    ElMessage.success('Asset added successfully')
+    ElMessage.success(t('admin.assetAdded'))
     assetForm.identifier = ''
   } catch (error: any) {
     ElMessage.error(error)
@@ -95,7 +119,7 @@ const handleAddUser = async () => {
   loading.value = true
   try {
     await api.post('/admin/users', userForm)
-    ElMessage.success('User whitelisted successfully')
+    ElMessage.success(t('admin.userWhitelisted'))
     userForm.name = ''
     userForm.id_last4 = ''
   } catch (error: any) {
@@ -110,7 +134,7 @@ const handleSeedOTPs = async () => {
   try {
     const response = await api.post('/admin/seed-otps', { count: seedCount.value })
     otpCount.value = response.data.total_pool
-    ElMessage.success(`Added ${response.data.added} OTPs to pool`)
+    ElMessage.success(t('admin.otpsAdded', { added: response.data.added }))
   } catch (error: any) {
     ElMessage.error(error)
   } finally {

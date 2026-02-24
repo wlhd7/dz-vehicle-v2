@@ -1,0 +1,60 @@
+{
+  "common": {
+    "confirm": "确认",
+    "cancel": "取消",
+    "save": "保存",
+    "logout": "登出",
+    "back": "返回",
+    "admin": "管理面板",
+    "success": "成功",
+    "error": "错误"
+  },
+  "login": {
+    "title": "车辆资产领取系统",
+    "name": "姓名",
+    "namePlaceholder": "请输入姓名",
+    "idDigits": "身份证后四位",
+    "idDigitsPlaceholder": "1234",
+    "submit": "验证身份",
+    "missingFields": "请同时输入姓名和身份证后四位"
+  },
+  "dashboard": {
+    "welcome": "欢迎，{name}",
+    "pickupTab": "领取资产",
+    "returnTab": "归还资产",
+    "identifier": "标识符",
+    "type": "类型",
+    "status": "状态",
+    "action": "操作",
+    "pickupSelected": "领取选中资产",
+    "return": "归还",
+    "otpTitle": "您的领取代码",
+    "otpSubtitle": "请在无人值守终端使用此代码：",
+    "otpExpires": "有效期至：{time}",
+    "gotIt": "知道了",
+    "returnCodeTitle": "归还代码",
+    "returnCodeMessage": "您的归还代码是：{otp}"
+  },
+  "admin": {
+    "title": "管理后台",
+    "secretLabel": "安全密钥：",
+    "secretPlaceholder": "输入 ADMIN_SECRET",
+    "saveSecret": "在浏览器中保存密钥",
+    "secretNote": "* 密钥保存在浏览器中，用于授权管理操作。",
+    "addAsset": "添加新资产",
+    "type": "类型",
+    "identifier": "标识符",
+    "identifierPlaceholder": "车牌号或卡号",
+    "submitAsset": "添加资产",
+    "whitelistUser": "白名单新用户",
+    "idLast4": "身份证后4位",
+    "idLast4Placeholder": "5678",
+    "submitUser": "添加用户",
+    "otpPool": "OTP 密码池管理",
+    "currentPool": "当前密码池数量：{count}",
+    "seedOTPs": "填充新 OTP",
+    "assetAdded": "资产添加成功",
+    "userWhitelisted": "用户已成功加入白名单",
+    "otpsAdded": "成功向密码池添加了 {added} 个 OTP"
+  }
+}

@@ -4,6 +4,20 @@ const api = axios.create({
   baseURL: 'http://localhost:8000',
 });
 
+// Request interceptor to add the security header
+api.interceptors.request.use(
+  (config) => {
+    const secret = localStorage.getItem('admin_secret');
+    if (secret) {
+      config.headers['X-Admin-Secret'] = secret;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 // Response interceptor to handle errors
 api.interceptors.response.use(
   (response) => response,

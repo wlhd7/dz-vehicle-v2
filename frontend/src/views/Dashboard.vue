@@ -2,31 +2,31 @@
   <div class="dashboard-container">
     <el-card>
       <div style="display: flex; justify-content: space-between; align-items: center;">
-        <h2>Dashboard - Welcome, {{ userName }}</h2>
-        <el-button @click="handleLogout">Logout</el-button>
+        <h2>{{ $t('dashboard.welcome', { name: userName }) }}</h2>
+        <el-button @click="handleLogout">{{ $t('common.logout') }}</el-button>
       </div>
       
       <el-tabs v-model="activeTab">
-        <el-tab-pane label="Pickup Assets" name="pickup">
+        <el-tab-pane :label="$t('dashboard.pickupTab')" name="pickup">
           <el-table :data="availableAssets" style="width: 100%" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55" />
-            <el-table-column prop="identifier" label="Identifier" />
-            <el-table-column prop="type" label="Type" />
-            <el-table-column prop="status" label="Status" />
+            <el-table-column prop="identifier" :label="$t('dashboard.identifier')" />
+            <el-table-column prop="type" :label="$t('dashboard.type')" />
+            <el-table-column prop="status" :label="$t('dashboard.status')" />
           </el-table>
           
           <div style="margin-top: 20px; text-align: right;">
-            <el-button type="primary" :disabled="selectedAssets.length === 0" :loading="loading" @click="handlePickup">Pickup Selected Assets</el-button>
+            <el-button type="primary" :disabled="selectedAssets.length === 0" :loading="loading" @click="handlePickup">{{ $t('dashboard.pickupSelected') }}</el-button>
           </div>
         </el-tab-pane>
         
-        <el-tab-pane label="Return Assets" name="return">
+        <el-tab-pane :label="$t('dashboard.returnTab')" name="return">
            <el-table :data="heldAssets" style="width: 100%">
-            <el-table-column prop="identifier" label="Identifier" />
-            <el-table-column prop="type" label="Type" />
-            <el-table-column label="Action">
+            <el-table-column prop="identifier" :label="$t('dashboard.identifier')" />
+            <el-table-column prop="type" :label="$t('dashboard.type')" />
+            <el-table-column :label="$t('dashboard.action')">
               <template #default="scope">
-                <el-button size="small" type="danger" @click="handleReturn(scope.row.id)" :loading="loading">Return</el-button>
+                <el-button size="small" type="danger" @click="handleReturn(scope.row.id)" :loading="loading">{{ $t('dashboard.return') }}</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -34,14 +34,14 @@
       </el-tabs>
     </el-card>
     
-    <el-dialog v-model="otpDialogVisible" title="Your Pickup Code" width="300">
+    <el-dialog v-model="otpDialogVisible" :title="$t('dashboard.otpTitle')" width="300">
       <div style="text-align: center;">
-        <p>Use this code at the unattended terminal:</p>
+        <p>{{ $t('dashboard.otpSubtitle') }}</p>
         <h1 style="font-size: 48px; margin: 20px 0;">{{ otpCode }}</h1>
-        <p style="color: #666;">Expires at: {{ otpExpires }}</p>
+        <p style="color: #666;">{{ $t('dashboard.otpExpires', { time: formatDateTime(otpExpires) }) }}</p>
       </div>
       <template #footer>
-        <el-button type="primary" @click="otpDialogVisible = false">Got it</el-button>
+        <el-button type="primary" @click="otpDialogVisible = false">{{ $t('dashboard.gotIt') }}</el-button>
       </template>
     </el-dialog>
   </div>
@@ -50,10 +50,12 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import api from '../api/client'
 import type { Asset, PickupResponse, ReturnResponse } from '../types/api'
 
+const { t } = useI18n()
 const router = useRouter()
 const userId = localStorage.getItem('user_id')
 const userName = localStorage.getItem('user_name') || 'User'
@@ -80,6 +82,24 @@ const fetchAssets = async () => {
     assets.value = response.data
   } catch (error: any) {
     ElMessage.error(error)
+  }
+}
+
+const formatDateTime = (dateStr: string) => {
+  if (!dateStr) return ''
+  try {
+    const date = new Date(dateStr)
+    return new Intl.DateTimeFormat('zh-CN', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    }).format(date)
+  } catch (e) {
+    return dateStr
   }
 }
 
@@ -119,7 +139,10 @@ const handleReturn = async (assetId: string) => {
       asset_id: assetId
     })
     
-    ElMessageBox.alert(`Your return code is: ${response.data.otp}`, 'Return Code')
+    ElMessageBox.alert(
+      t('dashboard.returnCodeMessage', { otp: response.data.otp }), 
+      t('dashboard.returnCodeTitle')
+    )
     fetchAssets()
   } catch (error: any) {
     ElMessage.error(error)
