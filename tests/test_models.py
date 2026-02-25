@@ -55,3 +55,24 @@ def test_transaction_log(session):
     assert log.user_id == user.id
     assert log.asset_id == asset.id
     assert log.otp_id == otp.id
+
+def test_asset_maintenance_and_compliance_fields(session):
+    from datetime import datetime
+    now = datetime.utcnow()
+    asset = Asset(
+        type=AssetType.KEY, 
+        identifier="XYZ-789", 
+        status=AssetStatus.AVAILABLE,
+        maintenance_date=now,
+        maintenance_mileage=15000,
+        inspection_date=now,
+        insurance_date=now
+    )
+    session.add(asset)
+    session.commit()
+    
+    fetched = session.query(Asset).filter_by(identifier="XYZ-789").first()
+    assert fetched.maintenance_date == now
+    assert fetched.maintenance_mileage == 15000
+    assert fetched.inspection_date == now
+    assert fetched.insurance_date == now

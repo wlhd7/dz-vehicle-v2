@@ -2,26 +2,38 @@ import uuid
 from datetime import datetime, timedelta
 from typing import List, Optional
 from sqlalchemy.orm import Session
-from ..models import User, Asset, OTPPool, AssetStatus, TransactionLog, TransactionAction
+from ..models import User, Asset, OTPPool, AssetStatus, AssetType, TransactionLog, TransactionAction
 
 class AssetService:
     def __init__(self, db: Session):
         self.db = db
 
-    def list_assets(self, type: str = "all") -> List[dict]:
+    def list_assets(self, asset_type: str = "all") -> List[dict]:
         query = self.db.query(Asset)
-        if type != "all":
-            query = query.filter(Asset.type == type.upper())
+        if asset_type != "all":
+            query = query.filter(Asset.type == asset_type.upper())
         
         assets = query.all()
-        return [
-            {
+        result = []
+        for a in assets:
+            item = {
                 "id": str(a.id),
                 "type": a.type.value,
                 "identifier": a.identifier,
                 "status": a.status.value
-            } for a in assets
-        ]
+            }
+            if a.type.value == "KEY":
+                def safe_iso(dt):
+                    if dt and hasattr(dt, 'isoformat'):
+                        return dt.isoformat() + "Z"
+                    return dt # Return as is if already a string or None
+                
+                item["maintenance_date"] = safe_iso(a.maintenance_date)
+                item["maintenance_mileage"] = a.maintenance_mileage
+                item["inspection_date"] = safe_iso(a.inspection_date)
+                item["insurance_date"] = safe_iso(a.insurance_date)
+            result.append(item)
+        return result
 
     def list_active_loans(self) -> List[dict]:
         from sqlalchemy import func

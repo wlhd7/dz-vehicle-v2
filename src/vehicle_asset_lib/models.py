@@ -43,6 +43,10 @@ class Asset(Base):
     identifier: Mapped[str] = mapped_column(String(255))
     status: Mapped[AssetStatus] = mapped_column(SQLEnum(AssetStatus), default=AssetStatus.AVAILABLE)
     current_holder_id: Mapped[Optional[uuid.UUID]] = mapped_column(ForeignKey("users.id"), nullable=True)
+    maintenance_date: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
+    maintenance_mileage: Mapped[Optional[int]] = mapped_column(nullable=True)
+    inspection_date: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
+    insurance_date: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     
     transactions: Mapped[list["TransactionLog"]] = relationship(back_populates="asset")

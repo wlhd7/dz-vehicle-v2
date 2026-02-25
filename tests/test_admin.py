@@ -83,3 +83,24 @@ def test_low_otp_threshold(session):
     
     assert alert["triggered"] is True
     assert "Low OTP threshold" in alert["message"]
+
+def test_update_asset_maintenance_and_compliance(session):
+    from datetime import datetime, timedelta
+    service = AdminService(session)
+    asset = service.add_asset(AssetType.KEY, "XYZ-789")
+    
+    now = datetime.utcnow()
+    future_date = now + timedelta(days=365)
+    
+    updated = service.update_asset(
+        str(asset.id), 
+        maintenance_date=now,
+        maintenance_mileage=15000,
+        inspection_date=future_date,
+        insurance_date=future_date
+    )
+    
+    assert updated.maintenance_date == now
+    assert updated.maintenance_mileage == 15000
+    assert updated.inspection_date == future_date
+    assert updated.insurance_date == future_date

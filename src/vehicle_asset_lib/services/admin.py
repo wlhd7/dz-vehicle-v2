@@ -7,8 +7,15 @@ class AdminService:
     def __init__(self, db: Session):
         self.db = db
 
-    def add_asset(self, type: AssetType, identifier: str) -> Asset:
-        asset = Asset(type=type, identifier=identifier)
+    def add_asset(self, type: AssetType, identifier: str, maintenance_date=None, maintenance_mileage=None, inspection_date=None, insurance_date=None) -> Asset:
+        asset = Asset(
+            type=type, 
+            identifier=identifier,
+            maintenance_date=maintenance_date,
+            maintenance_mileage=maintenance_mileage,
+            inspection_date=inspection_date,
+            insurance_date=insurance_date
+        )
         self.db.add(asset)
         self.db.commit()
         self.db.refresh(asset)
@@ -17,7 +24,7 @@ class AdminService:
     def get_asset(self, asset_id: str) -> Optional[Asset]:
         return self.db.query(Asset).filter(Asset.id == uuid.UUID(asset_id)).first()
 
-    def update_asset(self, asset_id: str, identifier: Optional[str] = None, type: Optional[AssetType] = None, status: Optional[AssetStatus] = None) -> Optional[Asset]:
+    def update_asset(self, asset_id: str, identifier: Optional[str] = None, type: Optional[AssetType] = None, status: Optional[AssetStatus] = None, maintenance_date=None, maintenance_mileage=None, inspection_date=None, insurance_date=None) -> Optional[Asset]:
         asset = self.get_asset(asset_id)
         if not asset:
             return None
@@ -28,6 +35,14 @@ class AdminService:
             asset.type = type
         if status is not None:
             asset.status = status
+        if maintenance_date is not None:
+            asset.maintenance_date = maintenance_date
+        if maintenance_mileage is not None:
+            asset.maintenance_mileage = maintenance_mileage
+        if inspection_date is not None:
+            asset.inspection_date = inspection_date
+        if insurance_date is not None:
+            asset.insurance_date = insurance_date
             
         self.db.commit()
         self.db.refresh(asset)
