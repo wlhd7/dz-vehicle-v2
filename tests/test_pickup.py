@@ -27,6 +27,7 @@ def test_pickup_success(session):
     
     assert result["success"] is True
     assert result["otp"] == "998877"
+    assert "expires_at" in result
     assert sorted(result["assets"]) == sorted(["ABC-123", "987654"])
     
     # Check states

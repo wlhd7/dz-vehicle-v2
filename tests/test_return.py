@@ -29,6 +29,7 @@ def test_return_success(session):
     
     assert result["success"] is True, result.get("message")
     assert result["otp"] == "112233"
+    assert "expires_at" in result
     
     # Check states
     session.refresh(asset)
