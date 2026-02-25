@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import List, Optional
 from sqlalchemy.orm import Session
 from ..models import User, Asset, OTPPool, AssetStatus, TransactionLog, TransactionAction
@@ -21,6 +21,31 @@ class AssetService:
                 "identifier": a.identifier,
                 "status": a.status.value
             } for a in assets
+        ]
+
+    def list_active_loans(self) -> List[dict]:
+        from sqlalchemy import func
+        
+        # Subquery to find the latest PICKUP timestamp for each asset
+        latest_pickup = self.db.query(
+            TransactionLog.asset_id,
+            func.max(TransactionLog.timestamp).label("latest_ts")
+        ).filter(TransactionLog.action == TransactionAction.PICKUP).group_by(TransactionLog.asset_id).subquery()
+
+        query = self.db.query(Asset, User.name, latest_pickup.c.latest_ts)\
+            .join(User, Asset.current_holder_id == User.id)\
+            .join(latest_pickup, Asset.id == latest_pickup.c.asset_id)\
+            .filter(Asset.status == AssetStatus.CHECKED_OUT)\
+            .order_by(latest_pickup.c.latest_ts.desc())
+
+        results = query.all()
+        return [
+            {
+                "identifier": asset.identifier,
+                "type": asset.type.value,
+                "user": username,
+                "timestamp": timestamp.isoformat() + "Z"
+            } for asset, username, timestamp in results
         ]
 
     def pickup(self, user_id: str, asset_ids: List[str]) -> dict:
@@ -83,7 +108,7 @@ class AssetService:
             "success": True,
             "otp": otp.password,
             "assets": asset_identifiers,
-            "expires_at": str(datetime.utcnow()) # Placeholder for expiry logic
+            "expires_at": (datetime.utcnow() + timedelta(hours=2)).isoformat() + "Z"
         }
 
     def return_asset(self, user_id: str, asset_id: str) -> dict:
@@ -130,5 +155,6 @@ class AssetService:
         return {
             "success": True,
             "otp": otp.password,
-            "message": f"Return code generated for {len(assets)} assets"
+            "message": f"Return code generated for {len(assets)} assets",
+            "expires_at": (datetime.utcnow() + timedelta(hours=2)).isoformat() + "Z"
         }

@@ -46,6 +46,12 @@ class ReturnRequest(BaseModel):
     asset_ids: Optional[List[str]] = None
     asset_id: Optional[str] = None
 
+class LoanRecord(BaseModel):
+    identifier: str
+    type: str
+    user: str
+    timestamp: str
+
 @app.on_event("startup")
 def startup_event():
     init_db()
@@ -66,6 +72,11 @@ def verify_user(req: VerifyRequest, db: Session = Depends(get_db)):
 def list_assets(type: str = "all", db: Session = Depends(get_db)):
     service = AssetService(db)
     return service.list_assets(type)
+
+@app.get("/assets/loans", response_model=List[LoanRecord])
+def list_active_loans(db: Session = Depends(get_db)):
+    service = AssetService(db)
+    return service.list_active_loans()
 
 @app.post("/pickup")
 def pickup_assets(req: PickupRequest, db: Session = Depends(get_db)):

@@ -1,3 +1,7 @@
 Current Feature: 5-ui-logic-refactor
 Tech Stack: Python (FastAPI/Typer), SQLite, Vue 3 (Element Plus/i18n)
 Focus: Finalizing localized dashboard and bulk return logic.
+Current Feature: Unattended Pickup
+Tech Stack: Python, SQLite, Typer
+Current Feature: Unattended Pickup
+Tech Stack: Python, SQLite, Typer

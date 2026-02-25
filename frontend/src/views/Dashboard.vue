@@ -6,6 +6,14 @@
         <el-button @click="handleLogout">{{ $t('common.logout') }}</el-button>
       </div>
 
+      <!-- Persistent Password Display -->
+      <div v-if="activeOTP" class="password-display-container">
+        <span class="password-label">
+          {{ activeOTP.type === 'PICKUP' ? $t('dashboard.pickupCode') : $t('dashboard.returnCode') }}：
+        </span>
+        <span class="password-code">{{ activeOTP.code }}</span>
+      </div>
+
       <!-- Return Assets Section -->
       <div v-if="heldAssets.length > 0" class="section-container" style="margin-top: 20px;">
         <h3>{{ $t('dashboard.return') }}</h3>
@@ -22,7 +30,7 @@
         </div>
       </div>
 
-      <!-- Pickup Assets Section -->
+      <!-- Pickup Assets Section (Inventory) -->
       <div class="section-container" :style="{ marginTop: heldAssets.length > 0 ? '40px' : '20px' }">
         <h3>{{ $t('dashboard.pickup') }}</h3>
         <el-row :gutter="20">
@@ -54,42 +62,62 @@
           <el-button type="primary" :disabled="selectedAssets.length === 0" :loading="loading" @click="handlePickup">{{ $t('dashboard.pickupSelected') }}</el-button>
         </div>
       </div>
-    </el-card>
-    
-    <el-dialog v-model="otpDialogVisible" :title="$t('dashboard.otpTitle')" width="300">
-      <div style="text-align: center;">
-        <p>{{ $t('dashboard.otpSubtitle') }}</p>
-        <h1 style="font-size: 48px; margin: 20px 0;">{{ otpCode }}</h1>
-        <p style="color: #666;">{{ $t('dashboard.otpExpires', { time: formatDateTime(otpExpires) }) }}</p>
+
+      <!-- Loaned Items Section -->
+      <div v-if="loanRecords.length > 0" class="section-container" style="margin-top: 40px;">
+        <h3>{{ $t('dashboard.loan') }}</h3>
+        <LoanList :loans="loanRecords" />
       </div>
-      <template #footer>
-        <el-button type="primary" @click="otpDialogVisible = false">{{ $t('dashboard.gotIt') }}</el-button>
-      </template>
-    </el-dialog>
+    </el-card>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import api from '../api/client'
-import type { Asset, PickupResponse, ReturnResponse } from '../types/api'
+import LoanList from '../components/LoanList.vue'
+import type { Asset, PickupResponse, ReturnResponse, LoanRecord } from '../types/api'
 
 const { t } = useI18n()
 const router = useRouter()
 const userId = localStorage.getItem('user_id')
 const userName = localStorage.getItem('user_name') || 'User'
 const assets = ref<Asset[]>([])
+const loanRecords = ref<LoanRecord[]>([])
 const loading = ref(false)
 
 const selectedVehicle = ref<Asset | null>(null)
 const selectedGasCard = ref<Asset | null>(null)
 
-const otpDialogVisible = ref(false)
-const otpCode = ref('')
-const otpExpires = ref('')
+interface ActiveOTP {
+  code: string;
+  type: 'PICKUP' | 'RETURN';
+  expires_at: string;
+}
+
+const activeOTP = ref<ActiveOTP | null>(null)
+
+watch(activeOTP, (newVal) => {
+  if (newVal) {
+    localStorage.setItem('active_otp', JSON.stringify(newVal))
+  } else {
+    localStorage.removeItem('active_otp')
+  }
+}, { deep: true })
+
+const checkExpiration = () => {
+  if (activeOTP.value) {
+    const expiresAt = new Date(activeOTP.value.expires_at)
+    if (expiresAt <= new Date()) {
+      activeOTP.value = null
+    }
+  }
+}
+
+let expirationTimer: any = null
 
 onMounted(() => {
   if (!userId) {
@@ -97,6 +125,18 @@ onMounted(() => {
     return
   }
   fetchAssets()
+  fetchLoans()
+  
+  const savedOTP = localStorage.getItem('active_otp')
+  if (savedOTP) {
+    activeOTP.value = JSON.parse(savedOTP)
+    checkExpiration()
+  }
+  expirationTimer = setInterval(checkExpiration, 60000)
+})
+
+onUnmounted(() => {
+  if (expirationTimer) clearInterval(expirationTimer)
 })
 
 const fetchAssets = async () => {
@@ -115,21 +155,12 @@ const fetchAssets = async () => {
   }
 }
 
-const formatDateTime = (dateStr: string) => {
-  if (!dateStr) return ''
+const fetchLoans = async () => {
   try {
-    const date = new Date(dateStr)
-    return new Intl.DateTimeFormat('zh-CN', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false
-    }).format(date)
-  } catch (e) {
-    return dateStr
+    const response = await api.get<LoanRecord[]>('/assets/loans')
+    loanRecords.value = response.data
+  } catch (error: any) {
+    ElMessage.error(error)
   }
 }
 
@@ -176,13 +207,16 @@ const handlePickup = async () => {
       asset_ids: assetIds
     })
     
-    otpCode.value = response.data.otp
-    otpExpires.value = response.data.expires_at
-    otpDialogVisible.value = true
+    activeOTP.value = {
+      code: response.data.otp,
+      type: 'PICKUP',
+      expires_at: response.data.expires_at
+    }
     
     selectedVehicle.value = null
     selectedGasCard.value = null
     fetchAssets()
+    fetchLoans()
   } catch (error: any) {
     ElMessage.error(error)
   } finally {
@@ -199,11 +233,14 @@ const handleReturn = async () => {
       asset_ids: assetIds
     })
     
-    ElMessageBox.alert(
-      t('dashboard.returnCodeMessage', { otp: response.data.otp }), 
-      t('dashboard.returnCodeTitle')
-    )
+    activeOTP.value = {
+      code: response.data.otp,
+      type: 'RETURN',
+      expires_at: response.data.expires_at
+    }
+    
     fetchAssets()
+    fetchLoans()
   } catch (error: any) {
     ElMessage.error(error)
   } finally {
@@ -212,6 +249,7 @@ const handleReturn = async () => {
 }
 
 const handleLogout = () => {
+  activeOTP.value = null
   localStorage.removeItem('user_id')
   localStorage.removeItem('user_name')
   router.push('/')
@@ -221,6 +259,28 @@ const handleLogout = () => {
 <style scoped>
 .dashboard-container {
   padding: 20px;
+}
+
+.password-display-container {
+  margin: 20px 0;
+  padding: 15px;
+  border: 2px solid #67C23A;
+  border-radius: 4px;
+  background-color: #f0f9eb;
+  text-align: center;
+}
+
+.password-label {
+  font-size: 18px;
+  font-weight: bold;
+  color: #303133;
+}
+
+.password-code {
+  font-size: 24px;
+  font-weight: bold;
+  color: #67C23A;
+  margin-left: 10px;
 }
 
 :deep(.selected-row) {

@@ -30,6 +30,13 @@ def list(type: str = "all"):
         typer.echo(json.dumps(result))
 
 @app.command()
+def loans():
+    with SessionLocal() as db:
+        service = AssetService(db)
+        result = service.list_active_loans()
+        typer.echo(json.dumps(result))
+
+@app.command()
 def pickup(user_id: str, asset_ids: str):
     ids = [aid.strip() for aid in asset_ids.split(",")]
     with SessionLocal() as db:

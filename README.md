@@ -4,6 +4,8 @@ An unattended vehicle asset (keys, gas cards) pickup system with a localized Chi
 
 ## Features
 - **Unattended Workflow**: Simplified pickup and return for vehicles and gas cards.
+- **Persistent Password Display**: Embedded OTP display with 2-hour auto-expiration and refresh persistence.
+- **Active Loan Monitoring**: Dashboard and CLI views for currently borrowed assets.
 - **Localized UI**: Modern frontend built with Vue 3, Element Plus, and fully localized in Chinese.
 - **Dual Interface**: Robust Typer-based CLI and FastAPI-powered REST API.
 - **Secure Administration**: Protected administrative operations using `ADMIN_SECRET` and OTPs.
@@ -63,6 +65,9 @@ vehicle-asset verify "John Doe" "1234"
 
 # List assets
 vehicle-asset list
+
+# List active loans
+vehicle-asset loans
 
 # Pickup assets (keys/cards)
 vehicle-asset pickup <user_id> "asset_id_1,asset_id_2"

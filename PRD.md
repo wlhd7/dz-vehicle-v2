@@ -14,11 +14,15 @@
 - **Simplified Selection**: Users select one vehicle and/or one gas card from the inventory.
 - **Bulk Return**: Users can return all held assets with a single action.
 - **Workflow Enforcement**: Users are limited to borrowing one vehicle and one gas card at a time.
+- **Persistent OTP Display**: Codes for opening lockers are displayed directly in the UI with a green border, replacing intrusive popups.
+- **Auto-Expiration**: OTP displays automatically disappear after 2 hours to maintain UI cleanliness and security.
+- **Refresh Persistence**: Displayed codes survive page refreshes and browser restarts until they expire.
 
 ### 3.2 Administrative Management
 - **User Whitelist**: Manage users who are authorized to use the system.
 - **Asset Inventory**: Add, update, and delete vehicles and gas cards.
 - **OTP Pool**: Generate One-Time Passwords for secure operations.
+- **Loan Monitoring**: View active loans and their current holders via CLI and Dashboard.
 - **CLI & API Access**: Full administrative control via command line and REST API.
 
 ### 3.3 Security Validation

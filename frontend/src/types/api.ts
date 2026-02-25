@@ -22,4 +22,12 @@ export interface ReturnResponse {
   success: boolean;
   otp: string;
   message: string;
+  expires_at: string;
+}
+
+export interface LoanRecord {
+  identifier: string;
+  type: string;
+  user: string;
+  timestamp: string;
 }
