@@ -4,6 +4,7 @@ An unattended vehicle asset (keys, gas cards) pickup system with a localized Chi
 
 ## Features
 - **Unattended Workflow**: Simplified pickup and return for vehicles and gas cards.
+- **Batch Import CLI**: Bulk add authorized users and seed the OTP pool from text files with atomic validation.
 - **Persistent Password Display**: Embedded OTP display with 2-hour auto-expiration and refresh persistence.
 - **Loan Tracking & History**: Real-time monitoring of active loans and a public history panel with Excel-style filtering and pagination.
 - **Vehicle Maintenance & Compliance**: Track maintenance dates, mileage, annual inspection, and insurance expirations.
@@ -114,6 +115,7 @@ curl -H "X-Admin-Secret: your_secret" http://localhost:8000/admin/users
 ```bash
 # --- Whitelist Management ---
 vehicle-asset admin add-user "Alice Smith" "5678"
+vehicle-asset admin batch-add-users users.txt  # Supports mixed comma/newline delimiters
 vehicle-asset admin list-users
 vehicle-asset admin update-user <user_id> --name "Alice Jones"
 vehicle-asset admin delete-user <user_id>
@@ -126,6 +128,7 @@ vehicle-asset admin delete-asset <asset_id>
 
 # --- OTP Pool Management ---
 vehicle-asset admin seed-otps --count 50
+vehicle-asset admin seed-otps --file-path otps.txt  # Atomic import of 8-digit OTPs
 
 # --- Automated Notifications ---
 # Scans for vehicle warnings and sends an email. Suitable for a weekly cron job.

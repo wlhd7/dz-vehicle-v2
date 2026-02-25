@@ -20,8 +20,10 @@
 
 ### 3.2 Administrative Management
 - **User Whitelist**: Manage users who are authorized to use the system.
+- **Batch Whitelist Import**: Efficiently bulk add authorized users from text files with atomic validation and duplicate detection.
 - **Asset Inventory**: Add, update, and delete vehicles and gas cards.
 - **OTP Pool**: Generate One-Time Passwords for secure operations.
+- **Batch OTP Seeding**: Enhanced seeding command to bulk import 8-digit OTPs from files, skipping duplicates.
 - **Loan Monitoring**: View active loans and their current holders via CLI and Dashboard.
 - **Loan History Transparency**: A dedicated, publicly accessible "Loan Records" (领取记录) panel that tracks the last 200 pickup/return events with advanced filtering and pagination.
 - **CLI & API Access**: Full administrative control via command line and REST API.

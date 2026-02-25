@@ -13,7 +13,8 @@ This document provides essential context and instructions for Gemini CLI agents 
     - Selection feedback: Use light green backgrounds for selected rows in the inventory.
     - Vehicle Alerts: Use orange backgrounds (`warning-row`) and ⚠️ icons for vehicles with overdue maintenance (>6 months) or expiring compliance (<30 days).
     - Loan Records: Publicly accessible view with integrated Excel-style column filters and 8-item pagination.
-    - Navigation: "领取记录" (Loan Records), "车辆信息" (Vehicle Information), and "管理面板" (Admin Panel) links are on the login page, separated by `|`.
+    - Navigation: "领取记录" (Loan Records), "车辆信息" (Vehicle Information), and "管理面板" (Admin Panel) links are available on both the login page and dashboard for quick access.
+    - Back Navigation: "返回" button intelligently redirects to the Dashboard if the user is logged in, otherwise to the login page.
 
 ## Project Structure Refresher
 - `src/vehicle_asset_lib/`: Library core and Typer CLI.
@@ -41,6 +42,12 @@ vehicle-asset notify-admins --dry-run --json
 vehicle-asset loan-records --limit 20
 ```
 
+### Batch Imports (CLI)
+```bash
+vehicle-asset admin batch-add-users whitelist.txt
+vehicle-asset admin seed-otps --file-path otp.txt
+```
+
 ### Frontend Development
 ```bash
 cd frontend
@@ -56,6 +63,6 @@ The project has implemented a comprehensive vehicle maintenance and compliance t
 - Persistent password UI and active loan monitoring.
 - A secure "Vehicle Information" (车辆信息) panel for administrators.
 - A public "Loan Records" (领取记录) panel with Excel-style filtering and pagination for history tracking.
-- CLI support for adding and updating vehicle maintenance and compliance information.
+- CLI support for batch importing whitelist users and seeding OTPs from text files.
 - Automated weekly email notifications for maintenance and compliance warnings.
 - Fully localized in Simplified Chinese and following strict TDD.
