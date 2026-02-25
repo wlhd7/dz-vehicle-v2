@@ -33,6 +33,13 @@
 - **Localized UI**: Complete frontend localization in Simplified Chinese.
 - **Modern Typography**: High-quality Chinese font stack for better legibility.
 
+### 3.5 Vehicle Maintenance & Compliance Tracking
+- **Maintenance Records**: Track the date and mileage of the last vehicle maintenance.
+- **Compliance Monitoring**: Manage annual inspection and insurance expiration dates.
+- **Visual Alerts**: Highlight vehicles in the management UI (orange background + ⚠️ icon) when maintenance is overdue (>6 months) or compliance is expiring within 30 days.
+- **Automated Notifications**: Weekly email reports sent to administrators summarizing all active vehicle warnings.
+- **Management Panel**: Dedicated "Vehicle Information" (车辆信息) panel for administrators to update these records securely.
+
 ## 4. Technical Stack
 - **Backend**:
   - Language: Python 3.x

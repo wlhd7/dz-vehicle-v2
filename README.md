@@ -6,6 +6,8 @@ An unattended vehicle asset (keys, gas cards) pickup system with a localized Chi
 - **Unattended Workflow**: Simplified pickup and return for vehicles and gas cards.
 - **Persistent Password Display**: Embedded OTP display with 2-hour auto-expiration and refresh persistence.
 - **Active Loan Monitoring**: Dashboard and CLI views for currently borrowed assets.
+- **Vehicle Maintenance & Compliance**: Track maintenance dates, mileage, annual inspection, and insurance expirations.
+- **Automated Alerts**: Visual row highlighting (orange background + ⚠️ icon) in the UI and weekly automated email notifications to administrators.
 - **Localized UI**: Modern frontend built with Vue 3, Element Plus, and fully localized in Chinese.
 - **Dual Interface**: Robust Typer-based CLI and FastAPI-powered REST API.
 - **Secure Administration**: Protected administrative operations using `ADMIN_SECRET` and OTPs.
@@ -33,6 +35,12 @@ An unattended vehicle asset (keys, gas cards) pickup system with a localized Chi
    Create a `.env` file in the root directory:
    ```bash
    ADMIN_SECRET=your_secure_random_string
+   ADMIN_NOTIFICATION_EMAIL=admin@example.com
+   SMTP_SERVER=smtp.example.com
+   SMTP_PORT=587
+   SMTP_USER=your_username
+   SMTP_PASSWORD=your_password
+   SMTP_TLS=True
    ```
    *Note: If .env is configured, you don't need to prefix commands with ADMIN_SECRET.*
 
@@ -108,13 +116,19 @@ vehicle-asset admin update-user <user_id> --name "Alice Jones"
 vehicle-asset admin delete-user <user_id>
 
 # --- Asset Management ---
-vehicle-asset admin add-asset KEY "PLATE-123"
+vehicle-asset admin add-asset KEY "PLATE-123" --maintenance-date 2026-01-01 --maintenance-mileage 5000
 vehicle-asset admin add-asset GAS_CARD "CARD-456"
-vehicle-asset admin update-asset <asset_id> --identifier "PLATE-789"
+vehicle-asset admin update-asset <asset_id> --identifier "PLATE-789" --inspection-date 2026-12-31
 vehicle-asset admin delete-asset <asset_id>
 
 # --- OTP Pool Management ---
 vehicle-asset admin seed-otps --count 50
+
+# --- Automated Notifications ---
+# Scans for vehicle warnings and sends an email. Suitable for a weekly cron job.
+vehicle-asset notify-admins
+vehicle-asset notify-admins --dry-run
+vehicle-asset notify-admins --json
 ```
 
 ## Architecture

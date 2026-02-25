@@ -1,7 +1,5 @@
-Current Feature: 5-ui-logic-refactor
-Tech Stack: Python (FastAPI/Typer), SQLite, Vue 3 (Element Plus/i18n)
-Focus: Finalizing localized dashboard and bulk return logic.
-Current Feature: Unattended Pickup
-Tech Stack: Python, SQLite, Typer
-Current Feature: Unattended Pickup
-Tech Stack: Python, SQLite, Typer
+Current Feature: Admin Vehicle Information Management
+Tech Stack: Python (FastAPI/Typer), SQLite, Vue 3 (Element Plus/i18n), SMTP (smtplib)
+Focus: Implementing vehicle maintenance tracking, compliance monitoring, and automated email notifications.
+Architecture: Library-First (Article I), CLI Mandate (Article II), TDD (Article III), SQLite persistence (Article IX).
+Language: Simplified Chinese (frontend/src/i18n/locales/zh-cn.json).
