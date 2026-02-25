@@ -3,7 +3,7 @@
     <el-card>
       <div class="header">
         <h2>{{ $t('loanRecords.title') }}</h2>
-        <el-button @click="$router.push('/')">{{ $t('common.back') }}</el-button>
+        <el-button @click="goBack">{{ $t('common.back') }}</el-button>
       </div>
 
       <el-table 
@@ -65,17 +65,27 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { getLoanRecords, getIdentifiers } from '../api/client'
 import type { LoanHistoryRecord } from '../types/api'
 
 const { t } = useI18n()
+const router = useRouter()
 const loading = ref(false)
 const records = ref<LoanHistoryRecord[]>([])
 const allIdentifiers = ref<string[]>([])
 const currentPage = ref(1)
 const pageSize = ref(8)
+
+const goBack = () => {
+  if (localStorage.getItem('user_id')) {
+    router.push('/dashboard')
+  } else {
+    router.push('/')
+  }
+}
 
 // Active filters
 const activeFilters = ref<{ [key: string]: string[] }>({})

@@ -1,6 +1,13 @@
 <template>
   <div class="dashboard-container">
     <el-card>
+      <div style="text-align: center">
+        <el-link @click="$router.push('/loan-records')">{{ $t('common.loanRecords') }}</el-link>
+        <span style="margin: 0 10px; color: #dcdfe6;">|</span>
+        <el-link @click="$router.push('/vehicle-info')">{{ $t('common.vehicleInfo') }}</el-link>
+        <span style="margin: 0 10px; color: #dcdfe6;">|</span>
+        <el-link @click="$router.push('/admin')">{{ $t('common.admin') }}</el-link>
+      </div>
       <div style="display: flex; justify-content: space-between; align-items: center;">
         <h2>{{ $t('dashboard.welcome', { name: userName }) }}</h2>
         <el-button @click="handleLogout">{{ $t('common.logout') }}</el-button>

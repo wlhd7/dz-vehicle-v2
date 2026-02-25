@@ -3,7 +3,7 @@
     <el-card>
       <div style="display: flex; justify-content: space-between; align-items: center;">
         <h2>{{ $t('vehicleInfo.title') }}</h2>
-        <el-button @click="$router.push('/')">{{ $t('common.back') }}</el-button>
+        <el-button @click="goBack">{{ $t('common.back') }}</el-button>
       </div>
 
       <!-- Security Settings -->
@@ -84,14 +84,24 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import api from '../api/client'
 import type { Asset } from '../types/api'
 
 const { t } = useI18n()
+const router = useRouter()
 const loading = ref(false)
 const adminSecret = ref(localStorage.getItem('admin_secret') || '')
+
+const goBack = () => {
+  if (localStorage.getItem('user_id')) {
+    router.push('/dashboard')
+  } else {
+    router.push('/')
+  }
+}
 
 const vehicles = ref<Asset[]>([])
 const editDialogVisible = ref(false)
