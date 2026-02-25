@@ -1,6 +1,7 @@
 import typer
 import json
 import os
+from datetime import datetime
 from typing import Optional, List
 from dotenv import load_dotenv
 from .db import SessionLocal, init_db
@@ -52,6 +53,43 @@ def return_command(user_id: str, asset_ids: str):
         result = service.return_assets(user_id, ids)
         typer.echo(json.dumps(result))
 
+@app.command()
+def notify_admins(dry_run: bool = typer.Option(False, "--dry-run", help="Scan for warnings and print without sending email"), json_out: bool = typer.Option(False, "--json", help="Output results in JSON format")):
+    from .services.monitoring import MonitoringService
+    from .services.notifications import EmailService
+    import json as json_lib
+    
+    with SessionLocal() as db:
+        monitoring = MonitoringService(db)
+        alerts = monitoring.check_vehicle_alerts()
+        
+        if not alerts:
+            if json_out:
+                typer.echo(json_lib.dumps([]))
+            else:
+                typer.echo("No vehicle warnings detected. No email sent.")
+            return
+
+        if dry_run:
+            if json_out:
+                typer.echo(json_lib.dumps(alerts))
+            else:
+                typer.echo(f"[DRY RUN] Would send following warnings to {os.getenv('ADMIN_NOTIFICATION_EMAIL')}:")
+                for alert in alerts:
+                    typer.echo(f"- {alert['identifier']}: {alert['status']} (Last/Exp: {alert['date']})")
+            return
+            
+        email_service = EmailService()
+        success = email_service.send_admin_alert(alerts)
+        
+        if json_out:
+            typer.echo(json_lib.dumps({"sent": success, "alerts": alerts}))
+        else:
+            if success:
+                typer.echo(f"Sent notification email to {email_service.admin_email} containing {len(alerts)} warnings.")
+            else:
+                typer.echo("Failed to send notification email.", err=True)
+
 admin_app = typer.Typer()
 app.add_typer(admin_app, name="admin")
 
@@ -71,23 +109,74 @@ def init():
     typer.echo("Database initialized.")
 
 @admin_app.command()
-def add_asset(type: str, identifier: str):
+def add_asset(
+    type: str, 
+    identifier: str,
+    maintenance_date: Optional[datetime] = typer.Option(None, formats=["%Y-%m-%d", "%Y-%m-%dT%H:%M:%S"]),
+    maintenance_mileage: Optional[int] = None,
+    inspection_date: Optional[datetime] = typer.Option(None, formats=["%Y-%m-%d", "%Y-%m-%dT%H:%M:%S"]),
+    insurance_date: Optional[datetime] = typer.Option(None, formats=["%Y-%m-%d", "%Y-%m-%dT%H:%M:%S"])
+):
     with SessionLocal() as db:
         service = AdminService(db)
         asset_type = AssetType.KEY if type.upper() == "KEY" else AssetType.GAS_CARD
-        asset = service.add_asset(asset_type, identifier)
-        typer.echo(json.dumps({"id": str(asset.id), "identifier": asset.identifier}))
+        asset = service.add_asset(
+            asset_type, 
+            identifier,
+            maintenance_date=maintenance_date,
+            maintenance_mileage=maintenance_mileage,
+            inspection_date=inspection_date,
+            insurance_date=insurance_date
+        )
+        result = {"id": str(asset.id), "identifier": asset.identifier, "type": asset.type.value}
+        if asset.type == AssetType.KEY:
+            result.update({
+                "maintenance_date": asset.maintenance_date.isoformat() if asset.maintenance_date else None,
+                "maintenance_mileage": asset.maintenance_mileage,
+                "inspection_date": asset.inspection_date.isoformat() if asset.inspection_date else None,
+                "insurance_date": asset.insurance_date.isoformat() if asset.insurance_date else None,
+            })
+        typer.echo(json.dumps(result))
 
 @admin_app.command()
-def update_asset(asset_id: str, identifier: Optional[str] = None, type: Optional[str] = None):
+def update_asset(
+    asset_id: str, 
+    identifier: Optional[str] = None, 
+    type: Optional[str] = None,
+    maintenance_date: Optional[datetime] = typer.Option(None, formats=["%Y-%m-%d", "%Y-%m-%dT%H:%M:%S"]),
+    maintenance_mileage: Optional[int] = None,
+    inspection_date: Optional[datetime] = typer.Option(None, formats=["%Y-%m-%d", "%Y-%m-%dT%H:%M:%S"]),
+    insurance_date: Optional[datetime] = typer.Option(None, formats=["%Y-%m-%d", "%Y-%m-%dT%H:%M:%S"])
+):
     with SessionLocal() as db:
         service = AdminService(db)
         asset_type = None
         if type:
             asset_type = AssetType.KEY if type.upper() == "KEY" else AssetType.GAS_CARD
-        asset = service.update_asset(asset_id, identifier=identifier, type=asset_type)
+        
+        asset = service.update_asset(
+            asset_id, 
+            identifier=identifier, 
+            type=asset_type,
+            maintenance_date=maintenance_date,
+            maintenance_mileage=maintenance_mileage,
+            inspection_date=inspection_date,
+            insurance_date=insurance_date
+        )
         if asset:
-            typer.echo(json.dumps({"id": str(asset.id), "identifier": asset.identifier, "type": asset.type.value}))
+            result = {
+                "id": str(asset.id), 
+                "identifier": asset.identifier, 
+                "type": asset.type.value
+            }
+            if asset.type == AssetType.KEY:
+                result.update({
+                    "maintenance_date": asset.maintenance_date.isoformat() if asset.maintenance_date else None,
+                    "maintenance_mileage": asset.maintenance_mileage,
+                    "inspection_date": asset.inspection_date.isoformat() if asset.inspection_date else None,
+                    "insurance_date": asset.insurance_date.isoformat() if asset.insurance_date else None,
+                })
+            typer.echo(json.dumps(result))
         else:
             typer.echo("Asset not found", err=True)
 
