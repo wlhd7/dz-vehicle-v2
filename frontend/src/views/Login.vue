@@ -1,17 +1,17 @@
 <template>
   <div class="login-container">
     <el-card class="login-card">
-      <h2>{{ $t('login.title') }}</h2>
-      <el-form :model="form" @submit.prevent="handleVerify">
+      <h2 style="text-align: center; white-space: nowrap;">{{ $t('login.title') }}</h2>
+      <el-form :model="form" @submit.prevent="handleVerify" label-width="60px">
         <el-form-item :label="$t('login.name')">
           <el-input v-model="form.name" :placeholder="$t('login.namePlaceholder')" />
         </el-form-item>
         <el-form-item :label="$t('login.idDigits')">
           <el-input v-model="form.id_digits" :placeholder="$t('login.idDigitsPlaceholder')" maxlength="4" />
         </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="handleVerify" :loading="loading" block>{{ $t('login.submit') }}</el-button>
-        </el-form-item>
+        <div style="display: flex; justify-content: center; margin-top: 20px;">
+          <el-button type="primary" native-type="submit" :loading="loading">{{ $t('login.submit') }}</el-button>
+        </div>
       </el-form>
       <div style="margin-top: 20px; text-align: center;">
         <el-link @click="$router.push('/admin')">{{ $t('common.admin') }}</el-link>
@@ -65,6 +65,6 @@ const handleVerify = async () => {
   height: 80vh;
 }
 .login-card {
-  width: 400px;
+  width: 360px;
 }
 </style>

@@ -10,12 +10,12 @@
     "error": "错误"
   },
   "login": {
-    "title": "车辆资产领取系统",
+    "title": "车辆及加油卡领取系统",
     "name": "姓名",
     "namePlaceholder": "请输入姓名",
-    "idDigits": "身份证后四位",
-    "idDigitsPlaceholder": "1234",
-    "submit": "验证身份",
+    "idDigits": "密码",
+    "idDigitsPlaceholder": "身份证后四位",
+    "submit": "登陆",
     "missingFields": "请同时输入姓名和身份证后四位"
   },
   "dashboard": {
