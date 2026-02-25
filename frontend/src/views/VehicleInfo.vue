@@ -7,7 +7,7 @@
       </div>
 
       <!-- Security Settings -->
-      <el-card shadow="never" style="margin-top: 20px; border: 1px solid #e6a23c; background-color: #fdf6ec;">
+      <el-card v-if="!isMobile" shadow="never" style="margin-top: 20px; border: 1px solid #e6a23c; background-color: #fdf6ec;">
         <div style="display: flex; align-items: center; gap: 15px;">
           <strong style="color: #e6a23c;">{{ $t('admin.secretLabel') }}</strong>
           <el-input 
@@ -88,11 +88,13 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import api from '../api/client'
 import type { Asset } from '../types/api'
+import useIsMobile from '../composables/useIsMobile'
 
 const { t } = useI18n()
 const router = useRouter()
 const loading = ref(false)
 const adminSecret = ref(localStorage.getItem('admin_secret') || '')
+const isMobile = useIsMobile()
 
 const goBack = () => {
   if (localStorage.getItem('user_id')) {
@@ -206,10 +208,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.admin-container {
-  padding: 20px;
-}
-
 :deep(.warning-row) {
   background-color: #fdf6ec !important;
 }

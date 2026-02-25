@@ -7,7 +7,7 @@
       </div>
 
       <!-- Security Settings -->
-      <el-card shadow="never" style="margin-top: 20px; border: 1px solid #e6a23c; background-color: #fdf6ec;">
+      <el-card v-if="!isMobile" shadow="never" style="margin-top: 20px; border: 1px solid #e6a23c; background-color: #fdf6ec;">
         <div style="display: flex; align-items: center; gap: 15px;">
           <strong style="color: #e6a23c;">{{ $t('admin.secretLabel') }}</strong>
           <el-input 
@@ -22,7 +22,7 @@
       </el-card>
 
       <el-row :gutter="20">
-        <el-col :span="12">
+        <el-col :span="12" :xs="24" :sm="24" :md="12">
           <el-card shadow="never" style="margin-top: 20px;">
             <h3>{{ $t('admin.addAsset') }}</h3>
             <el-form :model="assetForm" label-width="100px">
@@ -42,7 +42,7 @@
           </el-card>
         </el-col>
 
-        <el-col :span="12">
+        <el-col :span="12" :xs="24" :sm="24" :md="12">
           <el-card shadow="never" style="margin-top: 20px;">
             <h3>{{ $t('admin.whitelistUser') }}</h3>
             <el-form :model="userForm" label-width="100px">
@@ -69,11 +69,13 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import api from '../api/client'
+import useIsMobile from '../composables/useIsMobile'
 
 const { t } = useI18n()
 const router = useRouter()
 const loading = ref(false)
 const adminSecret = ref(localStorage.getItem('admin_secret') || '')
+const isMobile = useIsMobile()
 
 const goBack = () => {
   if (localStorage.getItem('user_id')) {
@@ -127,9 +129,3 @@ const handleAddUser = async () => {
   }
 }
 </script>
-
-<style scoped>
-.admin-container {
-  padding: 20px;
-}
-</style>

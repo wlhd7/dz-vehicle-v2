@@ -6,10 +6,12 @@
         <span style="margin: 0 10px; color: #dcdfe6;">|</span>
         <el-link @click="$router.push('/vehicle-info')">{{ $t('common.vehicleInfo') }}</el-link>
         <span style="margin: 0 10px; color: #dcdfe6;">|</span>
+        <el-link class="usage-link" @click="$router.push('/usage')">{{ $t('common.usageGuide') }}</el-link>
+        <span style="margin: 0 10px; color: #dcdfe6;">|</span>
         <el-link @click="$router.push('/admin')">{{ $t('common.admin') }}</el-link>
       </div>
       <div style="display: flex; justify-content: space-between; align-items: center;">
-        <h2>{{ $t('dashboard.welcome', { name: userName }) }}</h2>
+        <h2>{{ $t('dashboard.welcome') }}</h2>
         <el-button @click="handleLogout">{{ $t('common.logout') }}</el-button>
       </div>
 
@@ -264,10 +266,16 @@ const handleLogout = () => {
 </script>
 
 <style scoped>
-.dashboard-container {
-  padding: 20px;
+.usage-link {
+  color: #6ec6ff;
 }
 
+.usage-link:hover {
+  color: #4fb5f2;
+}
+</style>
+
+<style scoped>
 .password-display-container {
   margin: 20px 0;
   padding: 15px;
@@ -292,5 +300,15 @@ const handleLogout = () => {
 
 :deep(.selected-row) {
   background-color: #f0f9eb !important;
+}
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    font-size: 25px;
+  }
+
+  :deep(.el-table) {
+    font-size: 25px;
+  }
 }
 </style>

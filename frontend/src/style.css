@@ -65,6 +65,19 @@ button:focus-visible {
   text-align: center;
 }
 
+@media (max-width: 768px) {
+  body {
+    display: block;
+    place-items: initial;
+  }
+
+  #app {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

@@ -182,7 +182,6 @@ const formatDate = (dateStr: string | undefined | null) => {
 
 <style scoped>
 .loan-records-container {
-  padding: 20px;
   max-width: 1000px;
   margin: 0 auto;
 }

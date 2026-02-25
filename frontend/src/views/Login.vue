@@ -1,6 +1,6 @@
 <template>
   <div class="login-container">
-    <el-card class="login-card">
+    <div class="login-card">
       <h2 style="text-align: center; margin-bottom: 30px;">{{ $t('login.title') }}</h2>
       <el-form :model="form" @submit.prevent="handleVerify" label-position="top" class="login-form">
         <el-form-item :label="$t('login.name')">
@@ -20,9 +20,11 @@
         <span style="margin: 0 10px; color: #dcdfe6;">|</span>
         <el-link @click="$router.push('/vehicle-info')">{{ $t('common.vehicleInfo') }}</el-link>
         <span style="margin: 0 10px; color: #dcdfe6;">|</span>
+        <el-link class="usage-link" @click="$router.push('/usage')">{{ $t('common.usageGuide') }}</el-link>
+        <span style="margin: 0 10px; color: #dcdfe6;">|</span>
         <el-link @click="$router.push('/admin')">{{ $t('common.admin') }}</el-link>
       </div>
-    </el-card>
+    </div>
   </div>
 </template>
 
@@ -97,5 +99,13 @@ const handleVerify = async () => {
 }
 .button-item {
   margin-top: 25px;
+}
+
+.usage-link {
+  color: #6ec6ff;
+}
+
+.usage-link:hover {
+  color: #4fb5f2;
 }
 </style>
