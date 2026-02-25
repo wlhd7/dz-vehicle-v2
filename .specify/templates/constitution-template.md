@@ -1,61 +1,50 @@
-# Project Constitution: [PROJECT_NAME]
+# [PROJECT_NAME] Constitution
+<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
 
-## Mission & Values
-[PROJECT_DESCRIPTION]
+## Core Principles
 
-## Principles
+### [PRINCIPLE_1_NAME]
+<!-- Example: I. Library-First -->
+[PRINCIPLE_1_DESCRIPTION]
+<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
 
-### 1. [PRINCIPLE_1_NAME]
-**Rule**: [PRINCIPLE_1_RULE]
-**Rationale**: [PRINCIPLE_1_RATIONALE]
+### [PRINCIPLE_2_NAME]
+<!-- Example: II. CLI Interface -->
+[PRINCIPLE_2_DESCRIPTION]
+<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
 
-### 2. [PRINCIPLE_2_NAME]
-**Rule**: [PRINCIPLE_2_RULE]
-**Rationale**: [PRINCIPLE_2_RATIONALE]
+### [PRINCIPLE_3_NAME]
+<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
+[PRINCIPLE_3_DESCRIPTION]
+<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
 
-### 3. [PRINCIPLE_3_NAME]
-**Rule**: [PRINCIPLE_3_RULE]
-**Rationale**: [PRINCIPLE_3_RATIONALE]
+### [PRINCIPLE_4_NAME]
+<!-- Example: IV. Integration Testing -->
+[PRINCIPLE_4_DESCRIPTION]
+<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
 
-### 4. [PRINCIPLE_4_NAME]
-**Rule**: [PRINCIPLE_4_RULE]
-**Rationale**: [PRINCIPLE_4_RATIONALE]
+### [PRINCIPLE_5_NAME]
+<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
+[PRINCIPLE_5_DESCRIPTION]
+<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
 
-### 5. [PRINCIPLE_5_NAME]
-**Rule**: [PRINCIPLE_5_RULE]
-**Rationale**: [PRINCIPLE_5_RATIONALE]
+## [SECTION_2_NAME]
+<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
 
-### 6. [PRINCIPLE_6_NAME]
-**Rule**: [PRINCIPLE_6_RULE]
-**Rationale**: [PRINCIPLE_6_RATIONALE]
+[SECTION_2_CONTENT]
+<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
 
-### 7. [PRINCIPLE_7_NAME]
-**Rule**: [PRINCIPLE_7_RULE]
-**Rationale**: [PRINCIPLE_7_RATIONALE]
+## [SECTION_3_NAME]
+<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
 
-### 8. [PRINCIPLE_8_NAME]
-**Rule**: [PRINCIPLE_8_RULE]
-**Rationale**: [PRINCIPLE_8_RATIONALE]
-
-### 9. [PRINCIPLE_9_NAME]
-**Rule**: [PRINCIPLE_9_RULE]
-**Rationale**: [PRINCIPLE_9_RATIONALE]
+[SECTION_3_CONTENT]
+<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
 
 ## Governance
+<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-### Amendment Procedure
-[AMENDMENT_PROCEDURE]
+[GOVERNANCE_RULES]
+<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
 
-### Versioning Policy
-This constitution follows semantic versioning (MAJOR.MINOR.PATCH):
-- MAJOR: Incompatible changes to core principles or governance.
-- MINOR: Additions or significant expansions of guidance.
-- PATCH: Clarifications and minor wording updates.
-
-### Compliance Review
-[COMPLIANCE_REVIEW]
-
-## Metadata
-- **Version**: [CONSTITUTION_VERSION]
-- **Ratification Date**: [RATIFICATION_DATE]
-- **Last Amended Date**: [LAST_AMENDED_DATE]
+**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
+<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->

@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-container">
     <el-card>
-      <div style="text-align: center">
+      <div class="nav-links">
         <el-link @click="$router.push('/loan-records')">{{ $t('common.loanRecords') }}</el-link>
         <span style="margin: 0 10px; color: #dcdfe6;">|</span>
         <el-link @click="$router.push('/vehicle-info')">{{ $t('common.vehicleInfo') }}</el-link>
@@ -273,6 +273,10 @@ const handleLogout = () => {
 .usage-link:hover {
   color: #4fb5f2;
 }
+
+.nav-links {
+  text-align: center;
+}
 </style>
 
 <style scoped>
@@ -304,6 +308,10 @@ const handleLogout = () => {
 
 @media (max-width: 768px) {
   .dashboard-container {
+    font-size: 25px;
+  }
+
+  .nav-links {
     font-size: 25px;
   }
 

@@ -15,7 +15,7 @@
           </el-button>
         </el-form-item>
       </el-form>
-      <div style="text-align: center;">
+      <div class="nav-links">
         <el-link @click="$router.push('/loan-records')">{{ $t('common.loanRecords') }}</el-link>
         <span style="margin: 0 10px; color: #dcdfe6;">|</span>
         <el-link @click="$router.push('/vehicle-info')">{{ $t('common.vehicleInfo') }}</el-link>
@@ -107,5 +107,15 @@ const handleVerify = async () => {
 
 .usage-link:hover {
   color: #4fb5f2;
+}
+
+.nav-links {
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .nav-links {
+    font-size: 25px;
+  }
 }
 </style>
