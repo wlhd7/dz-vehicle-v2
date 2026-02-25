@@ -79,14 +79,14 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import api from '../api/client'
 import LoanList from '../components/LoanList.vue'
-import type { Asset, PickupResponse, ReturnResponse, LoanRecord } from '../types/api'
+import type { Asset, PickupResponse, ReturnResponse, ActiveLoan } from '../types/api'
 
 useI18n()
 const router = useRouter()
 const userId = localStorage.getItem('user_id')
 const userName = localStorage.getItem('user_name') || 'User'
 const assets = ref<Asset[]>([])
-const loanRecords = ref<LoanRecord[]>([])
+const loanRecords = ref<ActiveLoan[]>([])
 const loading = ref(false)
 
 const selectedVehicle = ref<Asset | null>(null)
@@ -157,7 +157,7 @@ const fetchAssets = async () => {
 
 const fetchLoans = async () => {
   try {
-    const response = await api.get<LoanRecord[]>('/assets/loans')
+    const response = await api.get<ActiveLoan[]>('/assets/loans')
     loanRecords.value = response.data
   } catch (error: any) {
     ElMessage.error(error)

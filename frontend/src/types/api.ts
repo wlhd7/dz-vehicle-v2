@@ -29,9 +29,17 @@ export interface ReturnResponse {
   expires_at: string;
 }
 
-export interface LoanRecord {
+export interface ActiveLoan {
   identifier: string;
   type: string;
   user: string;
   timestamp: string;
+}
+
+export interface LoanHistoryRecord {
+  identifier: string;
+  type: string;
+  user_name: string;
+  loan_time: string;
+  return_time?: string;
 }

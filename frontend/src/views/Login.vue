@@ -16,6 +16,8 @@
         </el-form-item>
       </el-form>
       <div style="text-align: center;">
+        <el-link @click="$router.push('/loan-records')">{{ $t('common.loanRecords') }}</el-link>
+        <span style="margin: 0 10px; color: #dcdfe6;">|</span>
         <el-link @click="$router.push('/vehicle-info')">{{ $t('common.vehicleInfo') }}</el-link>
         <span style="margin: 0 10px; color: #dcdfe6;">|</span>
         <el-link @click="$router.push('/admin')">{{ $t('common.admin') }}</el-link>

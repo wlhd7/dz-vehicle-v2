@@ -13,10 +13,10 @@
 </template>
 
 <script setup lang="ts">
-import type { LoanRecord } from '../types/api'
+import type { ActiveLoan } from '../types/api'
 
 defineProps<{
-  loans: LoanRecord[]
+  loans: ActiveLoan[]
 }>()
 </script>
 

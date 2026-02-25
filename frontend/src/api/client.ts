@@ -26,4 +26,7 @@ api.interceptors.response.use(
   }
 );
 
+export const getLoanRecords = (limit: number = 200) => api.get('/assets/loan-records', { params: { limit } });
+export const getIdentifiers = () => api.get('/assets/identifiers');
+
 export default api;

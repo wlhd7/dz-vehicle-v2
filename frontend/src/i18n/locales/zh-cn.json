@@ -8,7 +8,9 @@
     "admin": "管理面板",
     "vehicleInfo": "车辆信息",
     "success": "成功",
-    "error": "错误"
+    "error": "错误",
+    "loanRecords": "领取记录",
+    "noRecords": "无记录"
   },
   "login": {
     "title": "车辆及加油卡领取系统",
@@ -18,6 +20,16 @@
     "idDigitsPlaceholder": "身份证后四位",
     "submit": "登陆",
     "missingFields": "请同时输入姓名和身份证后四位"
+  },
+  "loanRecords": {
+    "title": "领取记录",
+    "identifier": "标识符",
+    "type": "类型",
+    "user": "领用者",
+    "loanTime": "领用时间",
+    "returnTime": "归还时间",
+    "allTypes": "所有类型",
+    "allIdentifiers": "所有标识符"
   },
   "vehicleInfo": {
     "title": "车辆信息",
