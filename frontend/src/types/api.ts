@@ -3,6 +3,10 @@ export interface Asset {
   type: string;
   identifier: string;
   status: string;
+  maintenance_date?: string;
+  maintenance_mileage?: number;
+  inspection_date?: string;
+  insurance_date?: string;
 }
 
 export interface VerifyResponse {

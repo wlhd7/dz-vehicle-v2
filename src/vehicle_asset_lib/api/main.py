@@ -71,7 +71,7 @@ def verify_user(req: VerifyRequest, db: Session = Depends(get_db)):
 @app.get("/assets")
 def list_assets(type: str = "all", db: Session = Depends(get_db)):
     service = AssetService(db)
-    return service.list_assets(type)
+    return service.list_assets(asset_type=type)
 
 @app.get("/assets/loans", response_model=List[LoanRecord])
 def list_active_loans(db: Session = Depends(get_db)):
@@ -122,18 +122,49 @@ def admin_add_asset(req: AddAssetRequest, db: Session = Depends(get_db)):
 class UpdateAssetRequest(BaseModel):
     identifier: Optional[str] = None
     type: Optional[str] = None
+    maintenance_date: Optional[str] = None
+    maintenance_mileage: Optional[int] = None
+    inspection_date: Optional[str] = None
+    insurance_date: Optional[str] = None
 
 @admin_router.patch("/assets/{asset_id}")
 def admin_update_asset(asset_id: str, req: UpdateAssetRequest, db: Session = Depends(get_db)):
     service = AdminService(db)
     from ..models import AssetType
+    from datetime import datetime
     asset_type = None
     if req.type:
         asset_type = AssetType.KEY if req.type.upper() == "KEY" else AssetType.GAS_CARD
-    asset = service.update_asset(asset_id, identifier=req.identifier, type=asset_type)
+        
+    def parse_dt(dt_str):
+        if dt_str:
+            return datetime.fromisoformat(dt_str.replace('Z', '+00:00'))
+        return None
+
+    asset = service.update_asset(
+        asset_id, 
+        identifier=req.identifier, 
+        type=asset_type,
+        maintenance_date=parse_dt(req.maintenance_date),
+        maintenance_mileage=req.maintenance_mileage,
+        inspection_date=parse_dt(req.inspection_date),
+        insurance_date=parse_dt(req.insurance_date)
+    )
     if not asset:
         raise HTTPException(status_code=404, detail="Asset not found")
-    return {"id": str(asset.id), "identifier": asset.identifier, "type": asset.type.value}
+        
+    res = {"id": str(asset.id), "identifier": asset.identifier, "type": asset.type.value}
+    if asset.type.value == "KEY":
+        def safe_iso(dt):
+            if dt and hasattr(dt, 'isoformat'):
+                return dt.isoformat() + "Z"
+            return dt
+            
+        res["maintenance_date"] = safe_iso(asset.maintenance_date)
+        res["maintenance_mileage"] = asset.maintenance_mileage
+        res["inspection_date"] = safe_iso(asset.inspection_date)
+        res["insurance_date"] = safe_iso(asset.insurance_date)
+    return res
 
 @admin_router.delete("/assets/{asset_id}")
 def admin_delete_asset(asset_id: str, db: Session = Depends(get_db)):
