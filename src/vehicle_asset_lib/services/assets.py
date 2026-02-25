@@ -60,6 +60,64 @@ class AssetService:
             } for asset, username, timestamp in results
         ]
 
+    def list_loan_records(self, limit: int = 200) -> List[dict]:
+        from sqlalchemy import func, select
+        
+        # Correlated subquery for return_time
+        t2 = TransactionLog.__table__.alias("t2")
+        return_time_subquery = (
+            select(func.min(t2.c.timestamp))
+            .where(
+                t2.c.asset_id == TransactionLog.asset_id,
+                t2.c.action == TransactionAction.RETURN,
+                t2.c.timestamp > TransactionLog.timestamp
+            )
+            .correlate(TransactionLog)
+            .as_scalar()
+        )
+
+        query = self.db.query(
+            Asset.identifier,
+            Asset.type,
+            User.name.label("user_name"),
+            TransactionLog.timestamp.label("loan_time"),
+            return_time_subquery.label("return_time")
+        ).join(Asset, TransactionLog.asset_id == Asset.id)\
+         .join(User, TransactionLog.user_id == User.id)\
+         .filter(TransactionLog.action == TransactionAction.PICKUP)\
+         .order_by(TransactionLog.timestamp.desc())\
+         .limit(limit)
+
+        results = query.all()
+        
+        def safe_iso(dt):
+            if dt and hasattr(dt, 'isoformat'):
+                return dt.isoformat() + "Z"
+            return None
+
+        return [
+            {
+                "identifier": r.identifier,
+                "type": r.type.value,
+                "user_name": r.user_name,
+                "loan_time": safe_iso(r.loan_time),
+                "return_time": safe_iso(r.return_time)
+            } for r in results
+        ]
+
+    def list_all_identifiers(self) -> List[str]:
+        from sqlalchemy import union
+        
+        # Get identifiers from assets table
+        asset_ids = self.db.query(Asset.identifier)
+        
+        # Also get identifiers from transaction logs to include deleted assets with history
+        log_ids = self.db.query(Asset.identifier).join(TransactionLog, Asset.id == TransactionLog.asset_id)
+        
+        # Union and distinct
+        all_ids = asset_ids.union(log_ids).distinct().all()
+        return [r[0] for r in all_ids]
+
     def pickup(self, user_id: str, asset_ids: List[str]) -> dict:
         user = self.db.query(User).filter(User.id == uuid.UUID(user_id)).first()
         if not user:

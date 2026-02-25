@@ -38,6 +38,13 @@ def loans():
         typer.echo(json.dumps(result))
 
 @app.command()
+def loan_records(limit: int = 200):
+    with SessionLocal() as db:
+        service = AssetService(db)
+        result = service.list_loan_records(limit=limit)
+        typer.echo(json.dumps(result))
+
+@app.command()
 def pickup(user_id: str, asset_ids: str):
     ids = [aid.strip() for aid in asset_ids.split(",")]
     with SessionLocal() as db:
