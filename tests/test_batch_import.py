@@ -31,8 +31,7 @@ def setup_db(monkeypatch):
 def test_batch_add_users_success(tmp_path):
     # Setup test file
     users_file = tmp_path / "users.txt"
-    users_file.write_text("Alice,1234
-Bob,5678,Charlie,9012", encoding="utf-8")
+    users_file.write_text("Alice,1234\nBob,5678,Charlie,9012", encoding="utf-8")
     
     # Run command
     result = runner.invoke(app, ["admin", "batch-add-users", str(users_file)])
@@ -104,8 +103,7 @@ def test_batch_add_users_atomic_failure_invalid_id(tmp_path):
 
 def test_seed_otps_file_success(tmp_path):
     otp_file = tmp_path / "otps.txt"
-    otp_file.write_text("12345678,87654321
-11112222", encoding="utf-8")
+    otp_file.write_text("12345678,87654321\n11112222", encoding="utf-8")
     
     result = runner.invoke(app, ["admin", "seed-otps", "--file-path", str(otp_file)])
     
