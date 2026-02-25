@@ -60,15 +60,6 @@
           </el-card>
         </el-col>
       </el-row>
-
-      <el-card shadow="never" style="margin-top: 20px;">
-        <h3>{{ $t('admin.otpPool') }}</h3>
-        <div style="display: flex; align-items: center; gap: 20px;">
-          <span>{{ $t('admin.currentPool', { count: otpCount }) }}</span>
-          <el-input-number v-model="seedCount" :min="10" :max="500" />
-          <el-button type="warning" @click="handleSeedOTPs" :loading="loading">{{ $t('admin.seedOTPs') }}</el-button>
-        </div>
-      </el-card>
     </el-card>
   </div>
 </template>
@@ -83,8 +74,6 @@ import api from '../api/client'
 const { t } = useI18n()
 const router = useRouter()
 const loading = ref(false)
-const otpCount = ref(0)
-const seedCount = ref(100)
 const adminSecret = ref(localStorage.getItem('admin_secret') || '')
 
 const goBack = () => {
@@ -132,19 +121,6 @@ const handleAddUser = async () => {
     ElMessage.success(t('admin.userWhitelisted'))
     userForm.name = ''
     userForm.id_last4 = ''
-  } catch (error: any) {
-    ElMessage.error(error)
-  } finally {
-    loading.value = false
-  }
-}
-
-const handleSeedOTPs = async () => {
-  loading.value = true
-  try {
-    const response = await api.post('/admin/seed-otps', { count: seedCount.value })
-    otpCount.value = response.data.total_pool
-    ElMessage.success(t('admin.otpsAdded', { added: response.data.added }))
   } catch (error: any) {
     ElMessage.error(error)
   } finally {

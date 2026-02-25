@@ -81,11 +81,7 @@
     "idLast4": "身份证后4位",
     "idLast4Placeholder": "5678",
     "submitUser": "添加用户",
-    "otpPool": "OTP 密码池管理",
-    "currentPool": "当前密码池数量：{count}",
-    "seedOTPs": "填充新 OTP",
     "assetAdded": "资产添加成功",
-    "userWhitelisted": "用户已成功加入白名单",
-    "otpsAdded": "成功向密码池添加了 {added} 个 OTP"
+    "userWhitelisted": "用户已成功加入白名单"
   }
 }

@@ -125,9 +125,6 @@ class AddUserRequest(BaseModel):
     name: str
     id_last4: str
 
-class SeedOTPRequest(BaseModel):
-    count: int = 100
-
 @admin_router.post("/assets")
 def admin_add_asset(req: AddAssetRequest, db: Session = Depends(get_db)):
     service = AdminService(db)
@@ -220,11 +217,5 @@ def admin_delete_user(user_id: str, db: Session = Depends(get_db)):
     if not service.delete_user(user_id):
         raise HTTPException(status_code=404, detail="User not found")
     return {"message": "User deleted"}
-
-@admin_router.post("/seed-otps")
-def admin_seed_otps(req: SeedOTPRequest, db: Session = Depends(get_db)):
-    service = AdminService(db)
-    passwords = [f"OTP-{i:04d}-{str(uuid.uuid4())[:4]}" for i in range(req.count)]
-    return service.seed_otps(passwords)
 
 app.include_router(admin_router)
