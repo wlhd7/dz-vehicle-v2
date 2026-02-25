@@ -1,15 +1,43 @@
 import typer
 import json
 import os
+import re
 from datetime import datetime
 from typing import Optional, List
 from dotenv import load_dotenv
+
 from .db import SessionLocal, init_db
 from .services.verification import VerificationService
 from .services.assets import AssetService
 from .services.admin import AdminService
 from .services.auth import validate_admin_secret
 from .models import AssetType
+
+def _parse_batch_file(file_path: str) -> List[str]:
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    # Split by comma or newline and filter out empty tokens
+    tokens = [t.strip() for t in re.split(r'[,\n]+', content) if t.strip()]
+    return tokens
+
+def _validate_whitelist_tokens(tokens: List[str]):
+    if len(tokens) % 2 != 0:
+        typer.echo(f"Error: [Atomic Failure] Malformed file. Odd number of tokens ({len(tokens)}) found for user pairs.", err=True)
+        raise typer.Exit(code=1)
+    
+    # Validate each ID_Last4 (every second token)
+    for i in range(1, len(tokens), 2):
+        id_val = tokens[i]
+        if len(id_val) != 4:
+            name = tokens[i-1]
+            typer.echo(f"Error: [Atomic Failure] Invalid ID_Last4 format ({id_val}) for user '{name}'. Must be 4 characters.", err=True)
+            raise typer.Exit(code=1)
+
+def _validate_otp_tokens(tokens: List[str]):
+    for token in tokens:
+        if not (len(token) == 8 and token.isdigit()):
+            typer.echo(f"Error: [Atomic Failure] Invalid OTP format ({token}) found. Must be exactly 8 digits.", err=True)
+            raise typer.Exit(code=1)
 
 # Load environment variables
 load_dotenv()
@@ -231,14 +259,40 @@ def delete_user(user_id: str):
             typer.echo("User not found", err=True)
 
 @admin_app.command()
-def seed_otps(file_path: Optional[str] = None, count: int = 100):
+def batch_add_users(file_path: str):
+    if not os.path.exists(file_path):
+        typer.echo(f"Error: File not found: {file_path}", err=True)
+        raise typer.Exit(code=1)
+    
+    tokens = _parse_batch_file(file_path)
+    _validate_whitelist_tokens(tokens)
+    
+    # Group into pairs
+    pairs = [(tokens[i], tokens[i+1]) for i in range(0, len(tokens), 2)]
+    
+    with SessionLocal() as db:
+        service = AdminService(db)
+        result = service.batch_add_users(pairs)
+        typer.echo(json.dumps(result))
+
+@admin_app.command()
+def seed_otps(
+    file_path: Optional[str] = typer.Option(None, "--file-path", help="Path to batch file"), 
+    count: int = typer.Option(100, "--count", help="Number of random OTPs to generate if no file provided")
+):
     passwords = []
     if file_path:
-        with open(file_path, "r") as f:
-            passwords = [line.strip() for line in f if line.strip()]
+        if not os.path.exists(file_path):
+            typer.echo(f"Error: File not found: {file_path}", err=True)
+            raise typer.Exit(code=1)
+        
+        tokens = _parse_batch_file(file_path)
+        _validate_otp_tokens(tokens)
+        passwords = tokens
     else:
         # Generate some mock OTPs if no file provided
-        passwords = [f"OTP-{i:04d}" for i in range(count)]
+        # Use 8-digit format to be consistent with new validation
+        passwords = [f"{i:08d}" for i in range(count)]
         
     with SessionLocal() as db:
         service = AdminService(db)

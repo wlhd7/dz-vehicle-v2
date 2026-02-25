@@ -95,11 +95,36 @@ class AdminService:
         self.db.commit()
         return True
 
+    def batch_add_users(self, pairs: List[tuple]) -> dict:
+        added = 0
+        skipped = 0
+        for name, id_last4 in pairs:
+            exists = self.db.query(User).filter(User.name == name, User.id_last4 == id_last4).first()
+            if exists:
+                skipped += 1
+                continue
+            
+            user = User(name=name, id_last4=id_last4)
+            self.db.add(user)
+            added += 1
+        
+        self.db.commit()
+        return {"added": added, "skipped": skipped, "total": len(pairs)}
+
     def seed_otps(self, passwords: List[str]) -> dict:
+        added = 0
+        skipped = 0
         for pwd in passwords:
+            # Check for unused OTP with the same password
+            exists = self.db.query(OTPPool).filter(OTPPool.password == pwd, OTPPool.is_used == False).first()
+            if exists:
+                skipped += 1
+                continue
+                
             otp = OTPPool(password=pwd)
             self.db.add(otp)
+            added += 1
         self.db.commit()
         
         total = self.db.query(OTPPool).count()
-        return {"added": len(passwords), "total_pool": total}
+        return {"added": added, "skipped": skipped, "total_pool": total}
