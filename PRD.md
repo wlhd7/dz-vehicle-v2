@@ -23,6 +23,7 @@
 - **Asset Inventory**: Add, update, and delete vehicles and gas cards.
 - **OTP Pool**: Generate One-Time Passwords for secure operations.
 - **Loan Monitoring**: View active loans and their current holders via CLI and Dashboard.
+- **Loan History Transparency**: A dedicated, publicly accessible "Loan Records" (领取记录) panel that tracks the last 200 pickup/return events with advanced filtering and pagination.
 - **CLI & API Access**: Full administrative control via command line and REST API.
 
 ### 3.3 Security Validation

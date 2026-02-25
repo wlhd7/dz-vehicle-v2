@@ -1,5 +1,5 @@
-Current Feature: Admin Vehicle Information Management
+Current Feature: Loan Records
 Tech Stack: Python (FastAPI/Typer), SQLite, Vue 3 (Element Plus/i18n), SMTP (smtplib)
-Focus: Implementing vehicle maintenance tracking, compliance monitoring, and automated email notifications.
+Focus: Implementing vehicle loan history tracking with integrated filtering and pagination.
 Architecture: Library-First (Article I), CLI Mandate (Article II), TDD (Article III), SQLite persistence (Article IX).
 Language: Simplified Chinese (frontend/src/i18n/locales/zh-cn.json).
