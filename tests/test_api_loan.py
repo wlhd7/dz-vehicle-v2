@@ -67,3 +67,42 @@ def test_api_list_active_loans_empty():
     response = client.get("/assets/loans")
     assert response.status_code == 200
     assert response.json() == []
+
+def test_api_list_loan_records():
+    db = TestingSessionLocal()
+    user = User(name="historyuser", id_last4="1111")
+    db.add(user)
+    db.flush()
+    
+    otp = OTPPool(password="111111")
+    db.add(otp)
+    db.flush()
+    
+    asset = Asset(type=AssetType.KEY, identifier="HIST-V1")
+    db.add(asset)
+    db.flush()
+    
+    # Pickup
+    log = TransactionLog(user_id=user.id, asset_id=asset.id, action=TransactionAction.PICKUP, otp_id=otp.id, timestamp=datetime.utcnow())
+    db.add(log)
+    db.commit()
+    
+    response = client.get("/assets/loan-records")
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 1
+    assert data[0]["identifier"] == "HIST-V1"
+    assert data[0]["return_time"] is None
+
+def test_api_list_identifiers():
+    db = TestingSessionLocal()
+    asset1 = Asset(type=AssetType.KEY, identifier="ID-V1")
+    asset2 = Asset(type=AssetType.GAS_CARD, identifier="ID-C1")
+    db.add_all([asset1, asset2])
+    db.commit()
+    
+    response = client.get("/assets/identifiers")
+    assert response.status_code == 200
+    data = response.json()
+    assert "ID-V1" in data
+    assert "ID-C1" in data
