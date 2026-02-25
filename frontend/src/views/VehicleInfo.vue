@@ -18,7 +18,6 @@
             style="width: 300px"
           />
           <el-button type="warning" @click="saveSecret">{{ $t('admin.saveSecret') }}</el-button>
-          <span style="font-size: 12px; color: #909399;">{{ $t('admin.secretNote') }}</span>
         </div>
       </el-card>
 
@@ -45,7 +44,7 @@
           <el-table-column :label="$t('dashboard.action')" width="120">
             <template #default="scope">
               <el-button size="small" @click="handleEdit(scope.row)">
-                {{ $t('common.edit') || '编辑' }}
+                {{ $t('common.edit') }}
               </el-button>
             </template>
           </el-table-column>

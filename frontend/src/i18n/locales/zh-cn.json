@@ -10,7 +10,8 @@
     "success": "成功",
     "error": "错误",
     "loanRecords": "领取记录",
-    "noRecords": "无记录"
+    "noRecords": "无记录",
+    "edit": "编辑"
   },
   "login": {
     "title": "车辆及加油卡领取系统",
@@ -71,7 +72,6 @@
     "secretLabel": "安全密钥：",
     "secretPlaceholder": "输入 ADMIN_SECRET",
     "saveSecret": "在浏览器中保存密钥",
-    "secretNote": "* 密钥保存在浏览器中，用于授权管理操作。",
     "addAsset": "添加新资产",
     "type": "类型",
     "identifier": "标识符",

@@ -18,7 +18,6 @@
             style="width: 300px"
           />
           <el-button type="warning" @click="saveSecret">{{ $t('admin.saveSecret') }}</el-button>
-          <span style="font-size: 12px; color: #909399;">{{ $t('admin.secretNote') }}</span>
         </div>
       </el-card>
 
