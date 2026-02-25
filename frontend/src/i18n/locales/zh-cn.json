@@ -6,6 +6,7 @@
     "logout": "登出",
     "back": "返回",
     "admin": "管理面板",
+    "vehicleInfo": "车辆信息",
     "success": "成功",
     "error": "错误"
   },
@@ -17,6 +18,16 @@
     "idDigitsPlaceholder": "身份证后四位",
     "submit": "登陆",
     "missingFields": "请同时输入姓名和身份证后四位"
+  },
+  "vehicleInfo": {
+    "title": "车辆信息",
+    "edit": "编辑车辆信息",
+    "maintenanceDate": "上次保养日期",
+    "maintenanceMileage": "上次保养公里数",
+    "inspectionDate": "年审到期时间",
+    "insuranceDate": "车险到期时间",
+    "overdueMaintenance": "保养超期",
+    "expiringSoon": "即将到期"
   },
   "dashboard": {
     "welcome": "欢迎，{name}",

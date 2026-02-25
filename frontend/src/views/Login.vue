@@ -1,19 +1,23 @@
 <template>
   <div class="login-container">
     <el-card class="login-card">
-      <h2 style="text-align: center; white-space: nowrap;">{{ $t('login.title') }}</h2>
-      <el-form :model="form" @submit.prevent="handleVerify" label-width="60px">
+      <h2 style="text-align: center; margin-bottom: 30px;">{{ $t('login.title') }}</h2>
+      <el-form :model="form" @submit.prevent="handleVerify" label-position="top" class="login-form">
         <el-form-item :label="$t('login.name')">
           <el-input v-model="form.name" :placeholder="$t('login.namePlaceholder')" />
         </el-form-item>
         <el-form-item :label="$t('login.idDigits')">
           <el-input v-model="form.id_digits" :placeholder="$t('login.idDigitsPlaceholder')" maxlength="4" />
         </el-form-item>
-        <div style="display: flex; justify-content: center; margin-top: 20px;">
-          <el-button type="primary" native-type="submit" :loading="loading">{{ $t('login.submit') }}</el-button>
-        </div>
+        <el-form-item class="button-item">
+          <el-button type="primary" native-type="submit" :loading="loading" size="large" class="login-button">
+            {{ $t('login.submit') }}
+          </el-button>
+        </el-form-item>
       </el-form>
-      <div style="margin-top: 20px; text-align: center;">
+      <div style="text-align: center;">
+        <el-link @click="$router.push('/vehicle-info')">{{ $t('common.vehicleInfo') }}</el-link>
+        <span style="margin: 0 10px; color: #dcdfe6;">|</span>
         <el-link @click="$router.push('/admin')">{{ $t('common.admin') }}</el-link>
       </div>
     </el-card>
@@ -66,5 +70,30 @@ const handleVerify = async () => {
 }
 .login-card {
   width: 360px;
+}
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 40px;
+}
+:deep(.el-form-item) {
+  width: 240px; /* Shortened and equal length */
+  margin-bottom: 20px;
+}
+:deep(.el-form-item__label) {
+  padding-bottom: 0px !important;
+  text-align: left;
+  font-weight: bold;
+  font-size: 18px;
+  width: 100%;
+}
+.login-button {
+  width: 100%; /* Equal length to inputs */
+  height: 44px; /* Enlarged button */
+  font-size: 16px;
+}
+.button-item {
+  margin-top: 25px;
 }
 </style>

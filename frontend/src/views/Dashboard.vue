@@ -76,12 +76,12 @@
 import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import api from '../api/client'
 import LoanList from '../components/LoanList.vue'
 import type { Asset, PickupResponse, ReturnResponse, LoanRecord } from '../types/api'
 
-const { t } = useI18n()
+useI18n()
 const router = useRouter()
 const userId = localStorage.getItem('user_id')
 const userName = localStorage.getItem('user_name') || 'User'
