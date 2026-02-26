@@ -5,7 +5,8 @@ WORKDIR /app
 COPY frontend/package.json /app/frontend/package.json
 COPY frontend/package-lock.json /app/frontend/package-lock.json
 
-RUN if [ -f /app/frontend/package-lock.json ]; then \
+RUN npm config set registry https://registry.npmmirror.com && \
+    if [ -f /app/frontend/package-lock.json ]; then \
       cd /app/frontend && npm ci; \
     else \
       cd /app/frontend && npm install; \

@@ -8,8 +8,8 @@ ENV PYTHONUNBUFFERED=1
 COPY pyproject.toml README.md /app/
 COPY src /app/src
 
-RUN pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir .
+RUN pip install --no-cache-dir --upgrade pip -i https://pypi.tuna.tsinghua.edu.cn/simple \
+    && pip install --no-cache-dir . -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 EXPOSE 8000
 
