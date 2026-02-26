@@ -93,7 +93,6 @@ import type { Asset, PickupResponse, ReturnResponse, ActiveLoan } from '../types
 useI18n()
 const router = useRouter()
 const userId = localStorage.getItem('user_id')
-const userName = localStorage.getItem('user_name') || 'User'
 const assets = ref<Asset[]>([])
 const loanRecords = ref<ActiveLoan[]>([])
 const loading = ref(false)
