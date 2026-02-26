@@ -98,9 +98,13 @@ Strict adherence to TDD (Test-Driven Development):
 - **导入密码池**: `vehicle-asset admin seed-otps --file-path <file_path>`
 - **生成随机密码池**: `vehicle-asset admin seed-otps --count 100`
 
-### 4. 生产环境快捷脚本 (Scripts)
+### 5. 生产环境快捷脚本 (Scripts)
 - **一键启动/更新**: `./scripts/prod-start.sh`
 - **查看后端日志**: `docker compose -f docker/docker-compose.prod.yml logs -f backend`
+- **在 Docker 中运行 CLI**: 
+  ```bash
+  docker compose -f docker/docker-compose.prod.yml exec backend vehicle-asset <command>
+  ```
 
 ---
 *Follow [GEMINI.md](./GEMINI.md) for AI Agent directives.*
