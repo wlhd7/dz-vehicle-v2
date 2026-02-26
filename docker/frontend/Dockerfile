@@ -21,6 +21,6 @@ FROM nginx:1.25-alpine
 COPY docker/frontend/nginx.conf /etc/nginx/nginx.conf
 COPY --from=build /app/frontend/dist /usr/share/nginx/html
 
-EXPOSE 8081
+EXPOSE 80
 
 CMD ["nginx", "-g", "daemon off;"]
