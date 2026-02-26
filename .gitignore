@@ -200,6 +200,7 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+.opencode/
 
 # Marimo
 marimo/_static/
@@ -209,3 +210,4 @@ vehicle_asset.db
 test_loan_api.db
 otp.txt
 whitelist.txt
+text.txt
