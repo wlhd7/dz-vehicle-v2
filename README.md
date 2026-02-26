@@ -77,5 +77,29 @@ Strict adherence to TDD (Test-Driven Development):
 3. **Access**:
    `http://<server_ip>:8081/`
 
+## 💻 CLI 操作指南 (CLI Operations Guide)
+
+本系统内置了强大的后端 CLI 工具 `vehicle-asset`，用于日常管理和自动化任务。
+
+### 1. 管理员操作 (Admin)
+- **初始化数据库**: `vehicle-asset admin init`
+- **重置数据**: `vehicle-asset admin reset` (⚠️ 危险操作)
+
+### 2. 用户管理 (Users)
+- **批量导入用户**: `vehicle-asset users import-whitelist <csv_file>`
+- **列出所有白名单用户**: `vehicle-asset users list`
+
+### 3. OTP 密码管理 (OTP)
+- **导入密码池**: `vehicle-asset otp import-pool <pool_file>`
+- **检查当前活动 OTP**: `vehicle-asset otp status`
+
+### 4. 资产管理 (Assets)
+- **同步车辆状态**: `vehicle-asset assets sync-vehicles`
+- **生成预警报告**: `vehicle-asset notify-admins --dry-run`
+
+### 5. 生产环境快捷脚本 (Scripts)
+- **一键启动/更新**: `./scripts/prod-start.sh`
+- **查看后端日志**: `docker compose -f docker/docker-compose.prod.yml logs -f backend`
+
 ---
 *Follow [GEMINI.md](./GEMINI.md) for AI Agent directives.*
