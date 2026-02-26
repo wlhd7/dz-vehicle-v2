@@ -1,7 +1,0 @@
-# dz-vehicle-v2 - Project Context
-
-Tech Stack: Python (FastAPI/Typer), SQLite, Vue 3 (Element Plus/i18n), SMTP (smtplib)
-Current Feature: Batch Import CLI
-Focus: Implementing robust batch import for users and OTPs with unified delimiter support and atomic validation.
-Architecture: Library-First (Article I), CLI Mandate (Article II), TDD (Article III), SQLite persistence (Article IX).
-Language: Simplified Chinese (frontend/src/i18n/locales/zh-cn.json).

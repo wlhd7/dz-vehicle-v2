@@ -1,62 +1,62 @@
 # Product Requirements Document (PRD) - dz-vehicle-v2
 
-## 1. Project Overview
-`dz-vehicle-v2` is an unattended vehicle asset management system designed to facilitate the borrowing and returning of vehicles and gas cards. The system focuses on simplicity, security, and a localized experience for Chinese-speaking users.
+## 1. 项目概览 (Project Overview)
+`dz-vehicle-v2` 是一个无人值守的车辆资产管理系统，旨在简化车辆钥匙和加油卡的借还流程。系统专注于简洁性、安全性，并为中文用户提供本地化体验。
 
-## 2. Target Audience
-- **Employees**: Users who need to pick up and return vehicles and gas cards for work.
-- **Administrators**: Users responsible for managing the asset inventory, user whitelist, and system security.
+## 2. 目标受众 (Target Audience)
+- **员工**: 需要借用和归还车辆及加油卡的内部人员。
+- **管理员**: 负责维护资产清单、用户白名单、系统安全及车辆状态监控的人员。
 
-## 3. Core Features
+## 3. 核心功能 (Core Features)
 
-### 3.1 Unattended Pickup & Return
-- **Asset Categorization**: Assets are divided into "Vehicles" (represented by keys) and "Gas Cards".
-- **Simplified Selection**: Users select one vehicle and/or one gas card from the inventory.
-- **Bulk Return**: Users can return all held assets with a single action.
-- **Workflow Enforcement**: Users are limited to borrowing one vehicle and one gas card at a time.
-- **Persistent OTP Display**: Codes for opening lockers are displayed directly in the UI with a green border, replacing intrusive popups.
-- **Auto-Expiration**: OTP displays automatically disappear after 2 hours to maintain UI cleanliness and security.
-- **Refresh Persistence**: Displayed codes survive page refreshes and browser restarts until they expire.
+### 3.1 无人值守借还 (Unattended Pickup & Return)
+- **资产分类**: 资产分为“车辆”（以钥匙代表）和“加油卡”。
+- **简化选择**: 用户可从清单中选择一辆车和/或一张加油卡。
+- **批量归还**: 用户可通过单一操作归还当前持有的所有资产。
+- **工作流限制**: 用户每次借用限一辆车和一张卡。
+- **持久密码显示**: 用于开启储物柜的密码直接在 UI 中以绿色边框显示，不使用弹窗。
+- **自动失效**: 密码显示在 2 小时后自动消失，保持界面整洁并增强安全性。
+- **刷新持久化**: 显示的密码在页面刷新或浏览器重启后依然保留，直到 2 小时到期。
 
-### 3.2 Administrative Management
-- **User Whitelist**: Manage users who are authorized to use the system.
-- **Batch Whitelist Import**: Efficiently bulk add authorized users from text files with atomic validation and duplicate detection.
-- **Asset Inventory**: Add, update, and delete vehicles and gas cards.
-- **OTP Pool**: Generate One-Time Passwords for secure operations.
-- **Batch OTP Seeding**: Enhanced seeding command to bulk import 8-digit OTPs from files, skipping duplicates.
-- **Loan Monitoring**: View active loans and their current holders via CLI and Dashboard.
-- **Loan History Transparency**: A dedicated, publicly accessible "Loan Records" (领取记录) panel that tracks the last 200 pickup/return events with advanced filtering and pagination.
-- **CLI & API Access**: Full administrative control via command line and REST API.
+### 3.2 管理功能 (Administrative Management)
+- **用户白名单**: 管理授权使用系统的用户名单。
+- **批量导入**: 支持从文本文件高效批量导入授权用户，具备原子验证和重复检测功能。
+- **资产清单**: 添加、更新和删除车辆及加油卡。
+- **OTP 池管理**: 为安全操作生成一次性密码（OTP）。
+- **批量 OTP 播种**: 支持从文件批量导入 8 位 OTP，自动跳过重复项。
+- **借出监控**: 通过 CLI 和 Dashboard 实时查看活动借出记录及其持有人。
+- **借还记录透明化**: 专用的公共“领取记录”(Loan Records) 面板，追踪最近 200 条记录，支持 Excel 风格过滤与分页。
+- **CLI & API 访问**: 通过命令行和 REST API 提供完整的管理控制。
 
-### 3.3 Security Validation
-- **Admin Secret**: Administrative operations are protected by a mandatory secret (`ADMIN_SECRET`).
-- **Environment Configuration**: Support for `.env` files to manage secrets securely.
+### 3.3 安全验证 (Security Validation)
+- **管理员密钥**: 管理操作由强制性的 `ADMIN_SECRET` 保护。
+- **环境配置**: 支持 `.env` 文件安全管理密钥和配置。
 
-### 3.4 Chinese Localization
-- **Localized UI**: Complete frontend localization in Simplified Chinese.
-- **Modern Typography**: High-quality Chinese font stack for better legibility.
+### 3.4 中文本地化 (Chinese Localization)
+- **本地化 UI**: 前端界面完全使用简体中文。
+- **现代排版**: 针对中文优化的字体栈，提升易读性。
 
-### 3.5 Vehicle Maintenance & Compliance Tracking
-- **Maintenance Records**: Track the date and mileage of the last vehicle maintenance.
-- **Compliance Monitoring**: Manage annual inspection and insurance expiration dates.
-- **Visual Alerts**: Highlight vehicles in the management UI (orange background + ⚠️ icon) when maintenance is overdue (>6 months) or compliance is expiring within 30 days.
-- **Automated Notifications**: Weekly email reports sent to administrators summarizing all active vehicle warnings.
-- **Management Panel**: Dedicated "Vehicle Information" (车辆信息) panel for administrators to update these records securely.
+### 3.5 车辆保养与合规追踪 (Vehicle Maintenance & Compliance Tracking)
+- **保养记录**: 追踪最后一次保养的日期和里程。
+- **合规监控**: 管理年检日期和保险到期日期。
+- **视觉警报**: 管理界面中，针对保养过期（>6个月）或合规到期（<30天）的车辆，使用橙色背景 (`warning-row`) 和 ⚠️ 图标高亮。
+- **自动通知**: 每周向管理员发送包含所有车辆预警摘要的邮件。
+- **管理面板**: 专用“车辆信息”(Vehicle Information) 面板，供管理员安全更新记录。
 
-## 4. Technical Stack
-- **Backend**:
-  - Language: Python 3.x
-  - Framework: FastAPI (API), Typer (CLI)
-  - Database: SQLite
-  - Testing: Pytest (Strict TDD)
-- **Frontend**:
-  - Framework: Vue 3 + TypeScript
-  - UI Library: Element Plus
-  - Localization: Vue-i18n
-  - Build Tool: Vite
+## 4. 技术栈 (Technical Stack)
+- **后端 (Backend)**:
+  - 语言: Python 3.10+
+  - 框架: FastAPI (API), Typer (CLI)
+  - 数据库: SQLite (SQLAlchemy 2.0+)
+  - 测试: Pytest (严格执行 TDD)
+- **前端 (Frontend)**:
+  - 框架: Vue 3.5+ (Composition API) + TypeScript 5.9
+  - UI 库: Element Plus
+  - 国际化: Vue-i18n
+  - 构建工具: Vite 7+
 
-## 5. Success Criteria
-- **User Efficiency**: Reduction in time taken to pick up/return assets through the simplified UI.
-- **System Integrity**: 100% atomic updates for asset status changes.
-- **Security**: No unauthorized access to administrative endpoints.
-- **User Satisfaction**: Positive feedback on the localized Chinese interface.
+## 5. 成功标准 (Success Criteria)
+- **效率提升**: 简化 UI 后，用户完成借还资产的时间显著减少。
+- **数据一致性**: 资产状态更新实现 100% 原子化。
+- **安全性**: 没有任何未经授权的人员能访问管理端点。
+- **用户满意度**: 对本地化中文界面的积极反馈。

@@ -1,41 +1,39 @@
-# Vehicle Asset Pickup Library
+# dz-vehicle-v2: 无人值守车辆资产借还系统
 
-An unattended vehicle asset (keys, gas cards) pickup system with a localized Chinese dashboard.
+一个高效、安全、完全本地化的无人值守车辆资产（钥匙、加油卡）借还系统。
 
-## Features
-- **Unattended Workflow**: Simplified pickup and return for vehicles and gas cards.
-- **Batch Import CLI**: Bulk add authorized users and seed the OTP pool from text files with atomic validation.
-- **Persistent Password Display**: Embedded OTP display with 2-hour auto-expiration and refresh persistence.
-- **Loan Tracking & History**: Real-time monitoring of active loans and a public history panel with Excel-style filtering and pagination.
-- **Vehicle Maintenance & Compliance**: Track maintenance dates, mileage, annual inspection, and insurance expirations.
-- **Automated Alerts**: Visual row highlighting (orange background + ⚠️ icon) in the UI and weekly automated email notifications to administrators.
-- **Localized UI**: Modern frontend built with Vue 3, Element Plus, and fully localized in Chinese.
-- **Dual Interface**: Robust Typer-based CLI and FastAPI-powered REST API.
-- **Secure Administration**: Protected administrative operations using `ADMIN_SECRET` and OTPs.
-- **Reliable Persistence**: Production-ready SQLite integration with atomic transactions.
+## 🌟 核心特性 (Key Features)
+- **无人值守流程 (Unattended Pickup)**: 极简的车辆与加油卡借还工作流。
+- **批量导入工具 (Batch Import)**: 支持通过 CLI 批量导入白名单用户和 OTP 密码池。
+- **持久化密码显示 (Persistent OTP Display)**: 嵌入式密码展示，支持 2 小时自动失效与页面刷新持久化。
+- **透明化记录 (Transparent Logs)**: 实时监控活动借用，提供带 Excel 风格过滤的公共借还历史面板。
+- **预警监控 (Proactive Monitoring)**: 自动追踪保养、年检和保险到期，UI 高亮提醒 + 每周邮件通知。
+- **全中文 UI (Simplified Chinese UI)**: 基于 Vue 3 和 Element Plus 的现代中文仪表盘。
 
-## Project Structure
-- `src/vehicle_asset_lib/`: Core logic and CLI.
+## 📁 项目结构 (Project Structure)
+- `src/vehicle_asset_lib/`: Backend core logic and Typer CLI.
 - `src/vehicle_asset_lib/api/`: FastAPI REST endpoints.
-- `frontend/`: Vue 3 + TypeScript + Element Plus dashboard (Chinese).
-- `tests/`: Comprehensive TDD test suite.
+- `frontend/`: Vue 3 + TypeScript + Element Plus frontend.
+- `tests/`: TDD test suites (Python/Pytest).
+- `specs/`: Historical and current feature specifications.
+- `.gemini/context/`: Modular technical documentation library.
 
-## Setup
+## 🚀 Getting Started (快速开始)
 
-### Backend
-1. **Create virtual environment**:
+### Backend Setup (后端配置)
+1. **Create Virtual Environment**:
    ```bash
    python3 -m venv .venv
    source .venv/bin/activate
    ```
-2. **Install dependencies**:
+2. **Install Dependencies**:
    ```bash
    pip install -e ".[test]"
    ```
-3. **Configure Security**:
-   Create a `.env` file in the root directory:
+3. **Environment Config**:
+   Create `.env` with:
    ```bash
-   ADMIN_SECRET=your_secure_random_string
+   ADMIN_SECRET=your_secure_secret
    ADMIN_NOTIFICATION_EMAIL=admin@example.com
    SMTP_SERVER=smtp.example.com
    SMTP_PORT=587
@@ -43,102 +41,41 @@ An unattended vehicle asset (keys, gas cards) pickup system with a localized Chi
    SMTP_PASSWORD=your_password
    SMTP_TLS=True
    ```
-   *Note: If .env is configured, you don't need to prefix commands with ADMIN_SECRET.*
-
-4. **Initialize Database**:
+4. **Init Database**:
    ```bash
    vehicle-asset admin init
    ```
-5. **Run API**:
+5. **Start API**:
    ```bash
    uvicorn vehicle_asset_lib.api.main:app --reload
    ```
 
-### Frontend
-1. **Install dependencies**:
+### Frontend Setup (前端配置)
+1. **Install Dependencies**:
    ```bash
    cd frontend
    npm install
    ```
-2. **Run development server**:
+2. **Start Dev Server**:
    ```bash
    npm run dev
    ```
 
-## CLI Usage
+## 🛠 Development Workflow (开发流程)
+Strict adherence to TDD (Test-Driven Development):
+1. **Write Test**: Under `tests/`.
+2. **Run Test**: `pytest` (Expected failure).
+3. **Implement**: Code logic in `src/`.
+4. **Verify**: Run `pytest` (Ensure all pass).
+5. **Quality**: `ruff check .`.
 
-### User Operations
-```bash
-# Verify user
-vehicle-asset verify "John Doe" "1234"
-
-# List assets
-vehicle-asset list
-
-# List active loans
-vehicle-asset loans
-
-# List loan history (last 200 records)
-vehicle-asset loan-records --limit 50
-
-# Pickup assets (keys/cards)
-vehicle-asset pickup <user_id> "asset_id_1,asset_id_2"
-
-# Return asset
-vehicle-asset return <user_id> <asset_id>
-```
-
-### Administrative Operations
-Administrative commands and endpoints are protected by `ADMIN_SECRET`.
-
-#### Option 1: Using .env (Recommended)
-If you have configured `ADMIN_SECRET` in your `.env` file, just run:
-```bash
-vehicle-asset admin list-users
-```
-
-#### Option 2: Command Prefix
-If you haven't used a `.env` file, you must provide the secret manually:
-```bash
-ADMIN_SECRET=your_secret vehicle-asset admin list-users
-```
-
-#### API Access
-Include the `X-Admin-Secret` header in your HTTP requests:
-```bash
-curl -H "X-Admin-Secret: your_secret" http://localhost:8000/admin/users
-```
+## 🌐 Production Deployment (Docker)
+1. **Prod Config**:
+   `cp docker/env.production.example docker/env.production`
+2. **Launch Services**:
+   `./scripts/prod-start.sh`
+3. **Access**:
+   `http://<server_ip>:8081/`
 
 ---
-
-### Admin Commands Reference
-```bash
-# --- Whitelist Management ---
-vehicle-asset admin add-user "Alice Smith" "5678"
-vehicle-asset admin batch-add-users users.txt  # Supports mixed comma/newline delimiters
-vehicle-asset admin list-users
-vehicle-asset admin update-user <user_id> --name "Alice Jones"
-vehicle-asset admin delete-user <user_id>
-
-# --- Asset Management ---
-vehicle-asset admin add-asset KEY "PLATE-123" --maintenance-date 2026-01-01 --maintenance-mileage 5000
-vehicle-asset admin add-asset GAS_CARD "CARD-456"
-vehicle-asset admin update-asset <asset_id> --identifier "PLATE-789" --inspection-date 2026-12-31
-vehicle-asset admin delete-asset <asset_id>
-
-# --- OTP Pool Management ---
-vehicle-asset admin seed-otps --count 50
-vehicle-asset admin seed-otps --file-path otps.txt  # Atomic import of 8-digit OTPs
-
-# --- Automated Notifications ---
-# Scans for vehicle warnings and sends an email. Suitable for a weekly cron job.
-vehicle-asset notify-admins
-vehicle-asset notify-admins --dry-run
-vehicle-asset notify-admins --json
-```
-
-## Architecture
-- **Article I**: Library-First core.
-- **Article II**: Typer-based CLI with JSON output.
-- **Article III**: Strict TDD with `pytest`.
-- **Article IX**: Realistic SQLite persistence.
+*Follow [GEMINI.md](./GEMINI.md) for AI Agent directives.*
