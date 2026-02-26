@@ -79,25 +79,26 @@ Strict adherence to TDD (Test-Driven Development):
 
 ## 💻 CLI 操作指南 (CLI Operations Guide)
 
-本系统内置了强大的后端 CLI 工具 `vehicle-asset`，用于日常管理和自动化任务。
+本系统内置了后端 CLI 工具 `vehicle-asset`，用于日常管理。**注意：`admin` 下的所有子命令均需要设置 `ADMIN_SECRET` 环境变量。**
 
-### 1. 管理员操作 (Admin)
-- **初始化数据库**: `vehicle-asset admin init`
-- **重置数据**: `vehicle-asset admin reset` (⚠️ 危险操作)
-
-### 2. 用户管理 (Users)
-- **批量导入用户**: `vehicle-asset users import-whitelist <csv_file>`
-- **列出所有白名单用户**: `vehicle-asset users list`
-
-### 3. OTP 密码管理 (OTP)
-- **导入密码池**: `vehicle-asset otp import-pool <pool_file>`
-- **检查当前活动 OTP**: `vehicle-asset otp status`
-
-### 4. 资产管理 (Assets)
-- **同步车辆状态**: `vehicle-asset assets sync-vehicles`
+### 1. 基础操作 (Basic)
+- **查看资产列表**: `vehicle-asset list` (可选参数 `--type KEY` 或 `GAS_CARD`)
+- **查看当前借出**: `vehicle-asset loans`
+- **查看借还记录**: `vehicle-asset loan-records --limit 100`
 - **生成预警报告**: `vehicle-asset notify-admins --dry-run`
 
-### 5. 生产环境快捷脚本 (Scripts)
+### 2. 管理员资产/用户管理 (Admin - Assets & Users)
+- **初始化数据库**: `vehicle-asset admin init`
+- **列出所有用户**: `vehicle-asset admin list-users`
+- **添加单个用户**: `vehicle-asset admin add-user "张三" "1234"`
+- **批量导入用户**: `vehicle-asset admin batch-add-users <csv_file>`
+- **添加/更新资产**: `vehicle-asset admin add-asset KEY "粤B12345" --maintenance-date 2024-01-01`
+
+### 3. OTP 密码管理 (Admin - OTP)
+- **导入密码池**: `vehicle-asset admin seed-otps --file-path <file_path>`
+- **生成随机密码池**: `vehicle-asset admin seed-otps --count 100`
+
+### 4. 生产环境快捷脚本 (Scripts)
 - **一键启动/更新**: `./scripts/prod-start.sh`
 - **查看后端日志**: `docker compose -f docker/docker-compose.prod.yml logs -f backend`
 
