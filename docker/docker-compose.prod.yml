@@ -7,6 +7,10 @@ services:
       - env.production
     ports:
       - "8002:8000"
+    volumes:
+      - ../data:/app/data
+    environment:
+      - DATABASE_URL=sqlite:///app/data/vehicle_asset.db
 
   frontend:
     build:
