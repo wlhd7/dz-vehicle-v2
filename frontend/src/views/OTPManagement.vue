@@ -78,7 +78,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import type { UploadFile, UploadFiles } from 'element-plus'
+import type { UploadFile } from 'element-plus'
 import { getOTPCount, addSingleOTP, uploadOTPBatch } from '../api/client'
 
 const router = useRouter()

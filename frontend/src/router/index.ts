@@ -20,7 +20,7 @@ const router = createRouter({
   ]
 })
 
-router.beforeEach((to, _from, next) => {
+router.beforeEach((to, _, next) => {
   if (to.path === '/otp-management') {
     const isAdmin = localStorage.getItem('user_name') === import.meta.env.VITE_OTP_ADMIN_NAME;
     if (!isAdmin) {
