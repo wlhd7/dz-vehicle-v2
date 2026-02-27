@@ -60,6 +60,22 @@ class AdminService:
     def list_users(self) -> List[User]:
         return self.db.query(User).all()
 
+    def get_otp_count(self) -> int:
+        return self.db.query(OTPPool).filter(OTPPool.is_used == False).count()
+
+    def add_single_otp(self, password: str) -> dict:
+        if len(password) != 8 or not password.isdigit():
+            raise ValueError("Invalid OTP format. Must be exactly 8 digits.")
+            
+        exists = self.db.query(OTPPool).filter(OTPPool.password == password, OTPPool.is_used == False).first()
+        if exists:
+            return {"added": 0, "total_pool": self.get_otp_count()}
+            
+        otp = OTPPool(password=password)
+        self.db.add(otp)
+        self.db.commit()
+        return {"added": 1, "total_pool": self.get_otp_count()}
+
     def add_user(self, name: str, id_last4: str) -> User:
         user = User(name=name, id_last4=id_last4)
         self.db.add(user)

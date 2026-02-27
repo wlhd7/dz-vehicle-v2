@@ -1,6 +1,6 @@
 from typing import List, Optional
 import uuid
-from fastapi import FastAPI, Depends, HTTPException, APIRouter
+from fastapi import FastAPI, Depends, HTTPException, APIRouter, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
@@ -192,6 +192,46 @@ def admin_list_users(db: Session = Depends(get_db)):
     service = AdminService(db)
     users = service.list_users()
     return [{"id": str(u.id), "name": u.name, "id_last4": u.id_last4, "status": u.status.value} for u in users]
+
+@admin_router.get("/otp/count")
+def admin_get_otp_count(db: Session = Depends(get_db)):
+    service = AdminService(db)
+    count = service.get_otp_count()
+    return {"count": count}
+
+class AddOTPRequest(BaseModel):
+    password: str
+
+@admin_router.post("/otp/single")
+def admin_add_single_otp(req: AddOTPRequest, db: Session = Depends(get_db)):
+    service = AdminService(db)
+    try:
+        result = service.add_single_otp(req.password)
+        return {"message": "OTP added successfully", "total_pool": result["total_pool"]}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@admin_router.post("/otp/batch")
+def admin_batch_upload_otp(file: UploadFile = File(...), db: Session = Depends(get_db)):
+    service = AdminService(db)
+    content = file.file.read().decode("utf-8")
+    
+    tokens = []
+    for line in content.splitlines():
+        for t in line.split(','):
+            cleaned = t.strip()
+            if cleaned:
+                tokens.append(cleaned)
+                
+    for token in tokens:
+        if not (len(token) == 8 and token.isdigit()):
+            raise HTTPException(status_code=400, detail="文件中包含无效的 OTP 格式")
+            
+    try:
+        result = service.seed_otps(tokens)
+        return {"added": result["added"], "skipped": result["skipped"], "total_pool": result["total_pool"]}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 @admin_router.post("/users")
 def admin_add_user(req: AddUserRequest, db: Session = Depends(get_db)):
