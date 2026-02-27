@@ -11,7 +11,7 @@
         <el-link @click="$router.push('/admin')">{{ $t('common.admin') }}</el-link>
       </div>
       <div style="display: flex; justify-content: space-between; align-items: center;">
-        <h2>{{ $t('dashboard.welcome') }}</h2>
+        <h2>{{ $t('dashboard.welcome', { name: userName }) }}</h2>
         <div style="display: flex; align-items: center; gap: 15px;">
           <el-link v-if="isOTPAdmin" type="primary" @click="$router.push('/otp-management')">{{ $t('common.otpManagement', 'OTP管理') }}</el-link>
           <el-button @click="handleLogout">{{ $t('common.logout') }}</el-button>
@@ -96,6 +96,7 @@ import type { Asset, PickupResponse, ReturnResponse, ActiveLoan } from '../types
 useI18n()
 const router = useRouter()
 const userId = localStorage.getItem('user_id')
+const userName = localStorage.getItem('user_name') || ''
 const assets = ref<Asset[]>([])
 const loanRecords = ref<ActiveLoan[]>([])
 const loading = ref(false)

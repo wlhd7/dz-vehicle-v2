@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
@@ -42,6 +42,12 @@ const loading = ref(false)
 const form = reactive({
   name: '',
   id_digits: ''
+})
+
+onMounted(() => {
+  if (localStorage.getItem('user_id')) {
+    router.push('/dashboard')
+  }
 })
 
 const handleVerify = async () => {

@@ -21,7 +21,13 @@ const router = createRouter({
 })
 
 router.beforeEach((to, _, next) => {
-  if (to.path === '/otp-management') {
+  const userId = localStorage.getItem('user_id');
+
+  if (to.path === '/' && userId) {
+    next('/dashboard');
+  } else if (to.path === '/dashboard' && !userId) {
+    next('/');
+  } else if (to.path === '/otp-management') {
     const isAdmin = localStorage.getItem('user_name') === import.meta.env.VITE_OTP_ADMIN_NAME;
     if (!isAdmin) {
       next('/dashboard');
