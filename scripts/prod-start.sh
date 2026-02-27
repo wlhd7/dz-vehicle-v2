@@ -14,6 +14,9 @@ if [[ ! -f "${ENV_FILE}" ]]; then
   exit 1
 fi
 
+# Export variables so they are available as build args in docker-compose
+export $(grep -v '^#' "${ENV_FILE}" | xargs)
+
 if ! docker compose -f "${COMPOSE_FILE}" up -d --build; then
   echo "Startup failed: verify Docker is running, required env values are set, and port 8081 is available."
   exit 1
