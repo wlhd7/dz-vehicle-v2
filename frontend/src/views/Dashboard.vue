@@ -11,7 +11,7 @@
         <el-link class="nav-link" @click="$router.push('/admin')">{{ $t('common.admin') }}</el-link>
       </div>
       <div style="display: flex; justify-content: space-between; align-items: center;">
-        <h2 class="welcome-text">{{ $t('dashboard.welcome', { name: userName }) }}</h2>
+        <h2 class="welcome-text">{{ $t('dashboard.welcome') }}</h2>
         <div style="display: flex; align-items: center; gap: 15px;">
           <el-link v-if="isOTPAdmin" type="primary" class="nav-link" @click="$router.push('/otp-management')">{{ $t('common.otpManagement', 'OTP管理') }}</el-link>
           <el-button class="large-btn logout-btn" @click="handleLogout">{{ $t('common.logout') }}</el-button>
