@@ -28,13 +28,44 @@ const isMobile = useIsMobile()
 <style>
 .app-container {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .full-page {
   width: 100vw;
+  height: 100vh;
 }
 
 .app-main {
-  min-height: 100vh;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Global overrides for mobile full-height experience */
+@media (max-width: 768px) {
+  /* Make the root div of any view flexible */
+  .app-main > div {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .el-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border: none !important;
+    border-radius: 0 !important;
+  }
+
+  .el-card__body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 15px !important;
+    overflow-y: auto;
+  }
 }
 </style>
