@@ -213,3 +213,7 @@ whitelist.txt
 text.txt
 bug.png
 *.png
+
+# Playwright & Local Tools
+.playwright-cli/
+mobile-view.yaml
