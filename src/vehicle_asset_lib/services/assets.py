@@ -20,7 +20,8 @@ class AssetService:
                 "id": str(a.id),
                 "type": a.type.value,
                 "identifier": a.identifier,
-                "status": a.status.value
+                "status": a.status.value,
+                "current_holder_id": str(a.current_holder_id) if a.current_holder_id else None
             }
             if a.type.value == "KEY":
                 def safe_iso(dt):

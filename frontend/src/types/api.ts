@@ -3,6 +3,7 @@ export interface Asset {
   type: string;
   identifier: string;
   status: string;
+  current_holder_id?: string;
   maintenance_date?: string;
   maintenance_mileage?: number;
   inspection_date?: string;

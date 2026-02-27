@@ -182,7 +182,7 @@ const fetchLoans = async () => {
 
 const availableVehicles = computed(() => assets.value.filter(a => a.status === 'AVAILABLE' && a.type === 'KEY'))
 const availableGasCards = computed(() => assets.value.filter(a => a.status === 'AVAILABLE' && a.type === 'GAS_CARD'))
-const heldAssets = computed(() => assets.value.filter(a => a.status === 'CHECKED_OUT')) // In a real app, this should filter by user_id from backend
+const heldAssets = computed(() => assets.value.filter(a => a.status === 'CHECKED_OUT' && a.current_holder_id === userId))
 
 const selectedAssets = computed(() => {
   const result = []
