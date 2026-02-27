@@ -10,7 +10,7 @@ services:
     volumes:
       - ../data:/app/data
     environment:
-      - DATABASE_URL=sqlite:///app/data/vehicle_asset.db
+      - DATABASE_URL=sqlite:////app/data/vehicle_asset.db
 
   frontend:
     build:
