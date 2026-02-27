@@ -14,6 +14,9 @@ RUN npm config set registry https://registry.npmmirror.com && \
 
 COPY frontend /app/frontend
 
+ARG VITE_OTP_ADMIN_NAME
+ENV VITE_OTP_ADMIN_NAME=$VITE_OTP_ADMIN_NAME
+
 RUN cd /app/frontend && npm run build
 
 FROM nginx:1.25-alpine
