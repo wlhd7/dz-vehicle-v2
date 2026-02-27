@@ -58,3 +58,10 @@ npm run build # Type checking
 
 ---
 *All modifications must align with roles defined in [AGENTS.md](./AGENTS.md).*
+
+## Active Technologies
+- Python 3.12, TypeScript/Vue 3 + FastAPI, SQLAlchemy, Element Plus (011-admin-otp-panel)
+- PostgreSQL (SQLAlchemy) (011-admin-otp-panel)
+
+## Recent Changes
+- 011-admin-otp-panel: Added Python 3.12, TypeScript/Vue 3 + FastAPI, SQLAlchemy, Element Plus

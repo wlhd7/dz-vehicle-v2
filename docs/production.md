@@ -6,6 +6,11 @@
 - Runtime configuration values prepared (see `docker/env.production.example`).
 - Port `8081` available for public access.
 
+## Configuration
+
+Make sure to set the designated administrator name for the OTP Management Panel in your environment file:
+- `VITE_OTP_ADMIN_NAME`: The name of the user who is allowed to access the OTP Management Panel.
+
 ## Startup
 
 1. Copy `docker/env.production.example` to `docker/env.production` and fill in real values.
