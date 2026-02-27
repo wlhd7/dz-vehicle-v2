@@ -128,7 +128,7 @@ const handleAddSingle = async () => {
   }
 }
 
-const handleFileChange = (uploadFile: UploadFile, uploadFiles: UploadFiles) => {
+const handleFileChange = (uploadFile: UploadFile) => {
   if (uploadFile.raw) {
     selectedFile.value = uploadFile.raw
   }
