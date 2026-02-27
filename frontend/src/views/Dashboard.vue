@@ -2,19 +2,19 @@
   <div class="dashboard-container">
     <el-card>
       <div class="nav-links">
-        <el-link @click="$router.push('/loan-records')">{{ $t('common.loanRecords') }}</el-link>
+        <el-link class="nav-link" @click="$router.push('/loan-records')">{{ $t('common.loanRecords') }}</el-link>
         <span style="margin: 0 10px; color: #dcdfe6;">|</span>
-        <el-link @click="$router.push('/vehicle-info')">{{ $t('common.vehicleInfo') }}</el-link>
+        <el-link class="nav-link" @click="$router.push('/vehicle-info')">{{ $t('common.vehicleInfo') }}</el-link>
         <span style="margin: 0 10px; color: #dcdfe6;">|</span>
-        <el-link class="usage-link" @click="$router.push('/usage')">{{ $t('common.usageGuide') }}</el-link>
+        <el-link class="nav-link usage-link" @click="$router.push('/usage')">{{ $t('common.usageGuide') }}</el-link>
         <span style="margin: 0 10px; color: #dcdfe6;">|</span>
-        <el-link @click="$router.push('/admin')">{{ $t('common.admin') }}</el-link>
+        <el-link class="nav-link" @click="$router.push('/admin')">{{ $t('common.admin') }}</el-link>
       </div>
       <div style="display: flex; justify-content: space-between; align-items: center;">
-        <h2>{{ $t('dashboard.welcome', { name: userName }) }}</h2>
+        <h2 class="welcome-text">{{ $t('dashboard.welcome', { name: userName }) }}</h2>
         <div style="display: flex; align-items: center; gap: 15px;">
-          <el-link v-if="isOTPAdmin" type="primary" @click="$router.push('/otp-management')">{{ $t('common.otpManagement', 'OTP管理') }}</el-link>
-          <el-button @click="handleLogout">{{ $t('common.logout') }}</el-button>
+          <el-link v-if="isOTPAdmin" type="primary" class="nav-link" @click="$router.push('/otp-management')">{{ $t('common.otpManagement', 'OTP管理') }}</el-link>
+          <el-button class="large-btn logout-btn" @click="handleLogout">{{ $t('common.logout') }}</el-button>
         </div>
       </div>
 
@@ -28,8 +28,8 @@
 
       <!-- Return Assets Section -->
       <div v-if="heldAssets.length > 0" class="section-container" style="margin-top: 20px;">
-        <h3>{{ $t('dashboard.return') }}</h3>
-        <el-table :data="heldAssets" style="width: 100%">
+        <h3 class="section-title">{{ $t('dashboard.return') }}</h3>
+        <el-table :data="heldAssets" style="width: 100%" class="large-table">
           <el-table-column prop="identifier" :label="$t('dashboard.identifier')" />
           <el-table-column :label="$t('dashboard.type')">
             <template #default="scope">
@@ -38,13 +38,13 @@
           </el-table-column>
         </el-table>
         <div style="margin-top: 20px; text-align: right;">
-          <el-button type="danger" :loading="loading" @click="handleReturn">{{ $t('dashboard.returnAction') }}</el-button>
+          <el-button type="danger" class="large-btn" :loading="loading" @click="handleReturn">{{ $t('dashboard.returnAction') }}</el-button>
         </div>
       </div>
 
       <!-- Pickup Assets Section (Inventory) -->
       <div class="section-container" :style="{ marginTop: heldAssets.length > 0 ? '40px' : '20px' }">
-        <h3>{{ $t('dashboard.pickup') }}</h3>
+        <h3 class="section-title">{{ $t('dashboard.pickup') }}</h3>
         <el-row :gutter="20">
           <el-col :span="12">
             <el-table 
@@ -53,6 +53,7 @@
               @row-click="handleVehicleClick"
               :row-class-name="tableRowClassName"
               row-key="id"
+              class="large-table"
             >
               <el-table-column prop="identifier" :label="$t('dashboard.assetTypes.KEY')" />
             </el-table>
@@ -64,6 +65,7 @@
               @row-click="handleGasCardClick"
               :row-class-name="tableRowClassName"
               row-key="id"
+              class="large-table"
             >
               <el-table-column prop="identifier" :label="$t('dashboard.assetTypes.GAS_CARD')" />
             </el-table>
@@ -71,14 +73,14 @@
         </el-row>
         
         <div style="margin-top: 20px; text-align: right;">
-          <el-button type="primary" :disabled="selectedAssets.length === 0" :loading="loading" @click="handlePickup">{{ $t('dashboard.pickupSelected') }}</el-button>
+          <el-button type="primary" class="large-btn" :disabled="selectedAssets.length === 0" :loading="loading" @click="handlePickup">{{ $t('dashboard.pickupSelected') }}</el-button>
         </div>
       </div>
 
       <!-- Loaned Items Section -->
       <div v-if="loanRecords.length > 0" class="section-container" style="margin-top: 40px;">
-        <h3>{{ $t('dashboard.loan') }}</h3>
-        <LoanList :loans="loanRecords" />
+        <h3 class="section-title">{{ $t('dashboard.loan') }}</h3>
+        <LoanList :loans="loanRecords" class="large-table" />
       </div>
     </el-card>
   </div>
@@ -273,6 +275,35 @@ const handleLogout = () => {
 </script>
 
 <style scoped>
+.nav-link {
+  font-size: 20px;
+}
+
+.welcome-text {
+  font-size: 28px;
+}
+
+.section-title {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.large-btn {
+  font-size: 20px;
+  padding: 12px 24px;
+  height: auto;
+}
+
+.logout-btn {
+  border: 2px solid #00008b !important;
+  color: #00008b !important;
+}
+
+.large-table :deep(.el-table__header),
+.large-table :deep(.el-table__body) {
+  font-size: 18px;
+}
+
 .usage-link {
   color: #6ec6ff;
 }
@@ -283,6 +314,7 @@ const handleLogout = () => {
 
 .nav-links {
   text-align: center;
+  margin-bottom: 20px;
 }
 </style>
 
@@ -297,13 +329,13 @@ const handleLogout = () => {
 }
 
 .password-label {
-  font-size: 18px;
+  font-size: 22px;
   font-weight: bold;
   color: #303133;
 }
 
 .password-code {
-  font-size: 24px;
+  font-size: 32px;
   font-weight: bold;
   color: #67C23A;
   margin-left: 10px;
