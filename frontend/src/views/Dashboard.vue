@@ -104,7 +104,7 @@ const loanRecords = ref<ActiveLoan[]>([])
 const loading = ref(false)
 
 const isOTPAdmin = computed(() => {
-  return localStorage.getItem('user_name') === import.meta.env.VITE_OTP_ADMIN_NAME
+  return userName === import.meta.env.VITE_OTP_ADMIN_NAME
 })
 
 const selectedVehicle = ref<Asset | null>(null)
