@@ -308,8 +308,12 @@ const handleLogout = () => {
   margin-left: 10px;
 }
 
-:deep(.selected-row) {
-  background-color: #f0f9eb !important;
+:deep(.selected-row td.el-table__cell) {
+  background-color: lightgreen !important;
+}
+
+:deep(.el-table .selected-row:hover td.el-table__cell) {
+  background-color: lightgreen !important;
 }
 
 @media (max-width: 768px) {
