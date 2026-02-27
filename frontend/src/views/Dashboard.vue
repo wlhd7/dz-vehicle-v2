@@ -351,15 +351,54 @@ const handleLogout = () => {
 
 @media (max-width: 768px) {
   .dashboard-container {
-    font-size: 25px;
+    font-size: 22px;
+    padding: 10px;
+  }
+
+  .dashboard-container h2 {
+    font-size: 26px;
+    margin-bottom: 15px;
+  }
+
+  .dashboard-container h3 {
+    font-size: 24px;
+    margin-bottom: 10px;
   }
 
   .nav-links {
-    font-size: 25px;
+    font-size: 18px;
+    white-space: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 5px;
   }
 
   :deep(.el-table) {
-    font-size: 25px;
+    font-size: 18px !important;
+  }
+
+  :deep(.el-table .cell) {
+    line-height: 1.4;
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+  }
+
+  :deep(.el-button) {
+    font-size: 18px !important;
+    padding: 10px 18px !important;
+    height: auto !important;
+  }
+
+  :deep(.el-link) {
+    font-size: 18px !important;
+  }
+
+  .password-label {
+    font-size: 22px !important;
+  }
+
+  .password-code {
+    font-size: 30px !important;
   }
 }
 </style>
