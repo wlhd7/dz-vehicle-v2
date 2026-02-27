@@ -28,5 +28,16 @@ api.interceptors.response.use(
 
 export const getLoanRecords = (limit: number = 200) => api.get('/assets/loan-records', { params: { limit } });
 export const getIdentifiers = () => api.get('/assets/identifiers');
+export const getOTPCount = () => api.get('/admin/otp/count');
+export const addSingleOTP = (password: string) => api.post('/admin/otp/single', { password });
+export const uploadOTPBatch = (file: File) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  return api.post('/admin/otp/batch', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+};
 
 export default api;

@@ -5,6 +5,7 @@ import Admin from '../views/Admin.vue'
 import UsageGuide from '../views/UsageGuide.vue'
 import VehicleInfo from '../views/VehicleInfo.vue'
 import LoanRecords from '../views/LoanRecords.vue'
+import OTPManagement from '../views/OTPManagement.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -15,7 +16,21 @@ const router = createRouter({
     { path: '/usage', name: 'UsageGuide', component: UsageGuide },
     { path: '/admin', name: 'Admin', component: Admin },
     { path: '/loan-records', name: 'LoanRecords', component: LoanRecords },
+    { path: '/otp-management', name: 'OTPManagement', component: OTPManagement },
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  if (to.path === '/otp-management') {
+    const isAdmin = localStorage.getItem('user_name') === import.meta.env.VITE_OTP_ADMIN_NAME;
+    if (!isAdmin) {
+      next('/dashboard');
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
+});
 
 export default router

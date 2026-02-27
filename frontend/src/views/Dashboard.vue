@@ -12,7 +12,10 @@
       </div>
       <div style="display: flex; justify-content: space-between; align-items: center;">
         <h2>{{ $t('dashboard.welcome') }}</h2>
-        <el-button @click="handleLogout">{{ $t('common.logout') }}</el-button>
+        <div style="display: flex; align-items: center; gap: 15px;">
+          <el-link v-if="isOTPAdmin" type="primary" @click="$router.push('/otp-management')">{{ $t('common.otpManagement', 'OTP管理') }}</el-link>
+          <el-button @click="handleLogout">{{ $t('common.logout') }}</el-button>
+        </div>
       </div>
 
       <!-- Persistent Password Display -->
@@ -96,6 +99,10 @@ const userId = localStorage.getItem('user_id')
 const assets = ref<Asset[]>([])
 const loanRecords = ref<ActiveLoan[]>([])
 const loading = ref(false)
+
+const isOTPAdmin = computed(() => {
+  return localStorage.getItem('user_name') === import.meta.env.VITE_OTP_ADMIN_NAME
+})
 
 const selectedVehicle = ref<Asset | null>(null)
 const selectedGasCard = ref<Asset | null>(null)
